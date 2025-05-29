@@ -10,12 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.UUID;
+import lombok.Getter;
 
 @Entity
 @Table(name = "notifications")
+@Getter
 public class Notification {
   @Id @GeneratedValue
-  private Long id;
+  private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
@@ -28,13 +31,16 @@ public class Notification {
   private ResourceType relatedType;
 
   @Column(nullable = false)
-  private Long relatedId;
+  private UUID relatedId;
 
   @Column(nullable = false)
   private boolean checked = false;
 
   @Column(nullable = false)
   private LocalDateTime createdAt = LocalDateTime.now();
+
+  @Column(nullable = false)
+  private LocalDateTime updatedAt = LocalDateTime.now();
 
   public enum ResourceType {
     INTEREST, COMMENT
