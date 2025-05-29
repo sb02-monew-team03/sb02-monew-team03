@@ -8,24 +8,25 @@ import java.util.UUID;
 
 public class CommentMapper {
 
-        public static Comment toComment(String content, NewsArticle article, User user) {
-            return Comment.builder()
-                    .news(article)
-                    .user(user)
-                    .content(content)
-                    .build();
-        }
-
-    public static CommentDto toCommentDto(Comment comment) {
-        return new CommentDto(
-                comment.getId(),
-                comment.getNews().getId(),
-                comment.getUser().getId(),
-                comment.getUser().getNickname(),
-                comment.getContent(),
-                comment.getLikeCount(),
-                true,
-                comment.getCreatedAt()
-        );
+    public Comment toComment(CommentDto dto, NewsArticle article, User user) {
+        return Comment.builder()
+            .news(article)
+            .user(user)
+            .content(dto.content())
+            .likeCount(dto.likeCount())
+            .build();
     }
+
+//    public static CommentDto toCommentDto(Comment comment) {
+//        return new CommentDto(
+//            comment.getId(),
+//            comment.getNews().getId(),
+//            comment.getUser().getId(),
+//            comment.getUser().getNickname(),
+//            comment.getContent(),
+//            comment.getLikeCount(),
+//            true,
+//            comment.getCreatedAt()
+//        );
+//    }
 }
