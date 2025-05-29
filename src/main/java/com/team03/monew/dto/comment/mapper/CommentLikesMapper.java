@@ -11,7 +11,7 @@ public class CommentLikesMapper {
         return CommentLike.builder()
                 .comment(comment)
                 .user(user)
-                .deleted(false)
+                .likedByMe(false)
                 .build();
     }
 
