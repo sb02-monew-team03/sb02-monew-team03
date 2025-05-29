@@ -49,5 +49,18 @@ public class Comment extends BaseTimeEntity{
     this.likeCount = likeCount;
   }
 
+  public void addCommentLike(CommentLike commentLike) {
+    if (!commentLikes.contains(commentLike)) {
+      commentLikes.add(commentLike);
+      commentLike.setComment(this);
+    }
+  }
+
+  public void removeCommentLike(CommentLike commentLike) {
+    if (commentLikes.remove(commentLike)) {
+      commentLike.setComment(null);
+    }
+  }
+
 
 }

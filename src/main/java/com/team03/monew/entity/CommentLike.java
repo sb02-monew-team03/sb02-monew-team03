@@ -24,4 +24,9 @@ public class CommentLike {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+
+
 }
