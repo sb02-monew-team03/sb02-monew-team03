@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class Comment extends BaseTimeEntity{
 
   @Id
-  private String id;
+  private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private NewsArticle news;
@@ -42,7 +42,7 @@ public class Comment extends BaseTimeEntity{
 
   @Builder
   public Comment(NewsArticle news, User user, String content, int likeCount) {
-    this.id = UUID.randomUUID().toString();
+    this.id = UUID.randomUUID();
     this.news = news;
     this.user = user;
     this.content = content;

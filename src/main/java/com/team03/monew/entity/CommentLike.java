@@ -5,15 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import java.util.UUID;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class CommentLike {
 
     @Id
-    private String id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment comment;
