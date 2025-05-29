@@ -1,4 +1,6 @@
 package com.team03.monew.dto.comment.request;
 
-public record CommentLikeActivityDto(String id, String createdBy, String commentId, String articleId,String articledTitle, String commentUserId, String commentUserNickName, String commentContent, Integer commentLikeCount, String commentCreatedAt) {
+import java.util.UUID;
+
+public record CommentLikeActivityDto(UUID id, UUID createdBy, UUID commentId, UUID articleId, String articledTitle, UUID commentUserId, String commentUserNickName, String commentContent, Integer commentLikeCount, String commentCreatedAt) {
 }
