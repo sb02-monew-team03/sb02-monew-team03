@@ -1,7 +1,7 @@
 package com.team03.monew.service;
 
-import com.team03.monew.dto.junhyeok.CursorPageResponseNotificationDto;
-import com.team03.monew.dto.junhyeok.NotificationDto;
+import com.team03.monew.dto.notification.CursorPageResponseNotificationDto;
+import com.team03.monew.dto.notification.NotificationDto;
 import com.team03.monew.entity.Notification;
 import com.team03.monew.repository.NotificationRepository;
 import java.time.LocalDateTime;

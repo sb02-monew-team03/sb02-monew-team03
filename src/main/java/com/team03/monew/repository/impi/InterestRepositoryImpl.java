@@ -1,13 +1,14 @@
-package com.team03.monew.repository.interest;
+package com.team03.monew.repository.impi;
 
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.team03.monew.dto.junhyeok.CursorPageResponseInterestDto;
-import com.team03.monew.dto.junhyeok.InterestDto;
+import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
+import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.entity.QInterest;
+import com.team03.monew.repository.Custom.InterestRepositoryCustom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
