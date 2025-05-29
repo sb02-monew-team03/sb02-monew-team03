@@ -1,6 +1,6 @@
 package com.team03.monew.controller;
 
-import com.team03.monew.dto.junhyeok.CursorPageResponseNotificationDto;
+import com.team03.monew.dto.notification.CursorPageResponseNotificationDto;
 import com.team03.monew.service.NotificationService;
 import java.time.LocalDateTime;
 import java.util.UUID;

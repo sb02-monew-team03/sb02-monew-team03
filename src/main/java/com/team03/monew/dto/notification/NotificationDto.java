@@ -1,4 +1,4 @@
-package com.team03.monew.dto.junhyeok;
+package com.team03.monew.dto.notification;
 
 import com.team03.monew.entity.Notification;
 import java.time.LocalDateTime;
