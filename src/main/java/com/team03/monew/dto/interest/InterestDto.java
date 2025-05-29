@@ -1,4 +1,4 @@
-package com.team03.monew.dto;
+package com.team03.monew.dto.interest;
 
 import java.util.List;
 import java.util.UUID;

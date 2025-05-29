@@ -1,15 +1,13 @@
-package com.team03.monew.dto;
+package com.team03.monew.dto.notification;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-// CursorPageResponseInterestDto.java
-public record CursorPageResponseInterestDto(
-    List<InterestDto> content,
+public record CursorPageResponseNotificationDto(
+    List<NotificationDto> content,
     String nextCursor,
     LocalDateTime nextAfter,
     int size,
     long totalElements,
     boolean hasNext
 ) {}
-
