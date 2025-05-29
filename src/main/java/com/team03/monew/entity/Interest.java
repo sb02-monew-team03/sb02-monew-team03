@@ -6,14 +6,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import lombok.Getter;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "interests")
+@Getter
 public class Interest {
   @Id @GeneratedValue
-  private Long id;
+  private UUID id;
 
   @Column(nullable = false, unique = true)
   private String name;
@@ -24,5 +29,7 @@ public class Interest {
   @Column(nullable = false)
   private int subscriberCount = 0;
 
+  @Column(nullable = false)
+  private LocalDateTime createdAt = LocalDateTime.now();
   // getter/setter
 }
