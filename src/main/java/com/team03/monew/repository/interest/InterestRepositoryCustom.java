@@ -1,7 +1,6 @@
-package com.team03.monew.repository;
+package com.team03.monew.repository.interest;
 
-import com.team03.monew.dto.CursorPageResponseInterestDto;
-import com.team03.monew.dto.InterestDto;
+import com.team03.monew.dto.junhyeok.CursorPageResponseInterestDto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

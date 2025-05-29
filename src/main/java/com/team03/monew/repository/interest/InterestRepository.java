@@ -1,4 +1,4 @@
-package com.team03.monew.repository;
+package com.team03.monew.repository.interest;
 
 import com.team03.monew.entity.Interest;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.team03.monew.dto;
+package com.team03.monew.dto.junhyeok;
 
 import java.time.LocalDateTime;
 import java.util.List;
