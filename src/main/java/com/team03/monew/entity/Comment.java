@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor
-public class Comment extends BaseTimeEntity{
+public class Comment extends BaseTimeEntity {
 
   @Id
   private UUID id;
@@ -37,16 +37,18 @@ public class Comment extends BaseTimeEntity{
   private int likeCount = 0;
 
 
+  private Boolean deleted = false;
+
+
   @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CommentLike> commentLikes = new ArrayList<>();
 
   @Builder
-  public Comment(NewsArticle news, User user, String content, int likeCount) {
+  public Comment(NewsArticle news, User user, String content) {
     this.id = UUID.randomUUID();
     this.news = news;
     this.user = user;
     this.content = content;
-    this.likeCount = likeCount;
   }
 
   public void addCommentLike(CommentLike commentLike) {
@@ -64,5 +66,29 @@ public class Comment extends BaseTimeEntity{
 
   public void setNews(NewsArticle news) {
     this.news = news;
+  }
+
+  public void increaseLikeCount() {
+    this.likeCount += 1;
+  }
+
+  public void decreaseLikeCount() {
+    if (this.likeCount > 0) {
+      this.likeCount -= 1;
+    }
+  }
+
+  public void markAsDeleted() {
+    this.deleted = true;
+  }
+
+  public void updateContent(String content) {
+    if (content != null) {
+      this.content = content;
+    }
+  }
+
+  public boolean isDeleted() {
+    return deleted;
   }
 }

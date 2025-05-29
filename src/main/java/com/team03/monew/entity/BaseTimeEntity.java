@@ -27,4 +27,6 @@ public abstract class BaseTimeEntity {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
+
+
 }
