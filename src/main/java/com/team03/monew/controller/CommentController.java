@@ -1,8 +1,10 @@
 package com.team03.monew.controller;
 
+import com.team03.monew.dto.comment.request.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
 import com.team03.monew.service.CommentService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +26,12 @@ public class CommentController {
         CommentDto registerComment = commentService.registerComment(commentRegisterRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(registerComment);
     }
+
+    @PostMapping("/{commentId}/comment-likes")
+    public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable UUID commentId, UUID userId) {
+        CommentLikeDto commentLikeDto = commentService.commentLikes(commentId, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(commentLikeDto);
+    }
+
 
 }
