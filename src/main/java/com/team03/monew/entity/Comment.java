@@ -1,11 +1,15 @@
 package com.team03.monew.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +28,7 @@ public class Comment extends BaseTimeEntity{
   private NewsArticle news;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  private User user;
+  private User user;  // 누가 썼는지
 
   @Column(nullable = false)
   private String content;
@@ -32,17 +36,17 @@ public class Comment extends BaseTimeEntity{
   @Column(nullable = false)
   private int likeCount = 0;
 
-  @Column(nullable = false)
-  private boolean deleted = false;
+
+  @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CommentLike> commentLikes = new ArrayList<>();
 
   @Builder
-  public Comment(String uuId, NewsArticle news, User user, String content, int likeCount, boolean deleted) {
+  public Comment(NewsArticle news, User user, String content, int likeCount) {
     this.id = UUID.randomUUID().toString();
     this.news = news;
     this.user = user;
     this.content = content;
     this.likeCount = likeCount;
-    this.deleted = deleted;
   }
 
 
