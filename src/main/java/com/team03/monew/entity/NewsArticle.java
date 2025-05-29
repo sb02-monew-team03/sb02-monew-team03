@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name = "news_articles")
 public class NewsArticle {
