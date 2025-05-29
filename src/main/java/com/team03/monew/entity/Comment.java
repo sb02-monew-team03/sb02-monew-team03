@@ -45,5 +45,7 @@ public class Comment extends BaseTimeEntity{
     this.deleted = deleted;
   }
 
-
+  public void setNews(NewsArticle news) {
+    this.news = news;
+  }
 }
