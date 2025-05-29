@@ -1,5 +1,6 @@
 package com.team03.monew.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -19,5 +20,8 @@ public class CommentLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
 
 }
