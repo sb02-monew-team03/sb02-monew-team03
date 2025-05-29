@@ -36,6 +36,8 @@ public class Comment extends BaseTimeEntity{
   @Column(nullable = false)
   private int likeCount = 0;
 
+  private Boolean deleted;
+
 
   @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CommentLike> commentLikes = new ArrayList<>();
@@ -75,5 +77,8 @@ public class Comment extends BaseTimeEntity{
     }
   }
 
+  public void markAsDeleted() {
+    this.deleted = true;
+  }
 
 }

@@ -13,4 +13,9 @@ public interface CommentService {
 
     public void cancelCommentLike(UUID commentId, UUID userId);
 
+    void softDeleteComment(UUID commentId, UUID userId);
+
+    void hardDeleteComment(UUID commentId, UUID userId);
+
+
 }

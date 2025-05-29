@@ -25,13 +25,13 @@ public class CommentLike extends BaseTimeEntity {
     private User user;
 
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean likedByMe = false;
 
     @Builder
-    public CommentLike(Comment comment, User user, boolean deleted) {
+    public CommentLike(Comment comment, User user, boolean likedByMe) {
         this.comment = comment;
         this.user = user;
-        this.deleted = deleted;
+        this.likedByMe = likedByMe;
     }
 
     public void setComment(Comment comment) {

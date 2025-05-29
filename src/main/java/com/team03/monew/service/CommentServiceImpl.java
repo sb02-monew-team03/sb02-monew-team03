@@ -114,4 +114,47 @@ public class CommentServiceImpl implements CommentService {
         commentLikeRepository.delete(commentLike);
     }
 
+    @Override
+    @Transactional
+    public void softDeleteComment(UUID commentId, UUID userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("UUID", "commentId", commentId.toString()),
+                        ExceptionType.COMMENT
+                ));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomException(
+                    ErrorCode.FORBIDDEN,
+                    new ErrorDetail("UUID", "userId", userId.toString()),
+                    ExceptionType.USER
+            );
+        }
+
+        comment.markAsDeleted();
+    }
+
+    @Override
+    @Transactional
+    public void hardDeleteComment(UUID commentId, UUID userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("UUID", "commentId", commentId.toString()),
+                        ExceptionType.COMMENT
+                ));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomException(
+                    ErrorCode.FORBIDDEN,
+                    new ErrorDetail("UUID", "userId", userId.toString()),
+                    ExceptionType.USER
+            );
+        }
+
+        commentRepository.delete(comment); // 실제 DB 삭제
+    }
+
+
 }
