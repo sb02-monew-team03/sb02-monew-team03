@@ -13,7 +13,6 @@ public class CommentMapper {
                     .user(user)
                     .content(dto.content())
                     .likeCount(dto.likeCount())
-                    .deleted(dto.likedByMe())
                     .build();
         }
 
