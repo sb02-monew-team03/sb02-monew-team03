@@ -41,12 +41,11 @@ public class Comment extends BaseTimeEntity{
   private List<CommentLike> commentLikes = new ArrayList<>();
 
   @Builder
-  public Comment(NewsArticle news, User user, String content, int likeCount) {
+  public Comment(NewsArticle news, User user, String content) {
     this.id = UUID.randomUUID();
     this.news = news;
     this.user = user;
     this.content = content;
-    this.likeCount = likeCount;
   }
 
   public void addCommentLike(CommentLike commentLike) {

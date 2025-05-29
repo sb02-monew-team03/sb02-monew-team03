@@ -1,4 +1,6 @@
 package com.team03.monew.dto.comment.request;
 
-public record CommentRegisterRequest(String articleId, String userId, String comment) {
+import java.util.UUID;
+
+public record CommentRegisterRequest(UUID articleId, UUID userId, String comment) {
 }
