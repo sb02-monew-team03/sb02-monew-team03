@@ -1,6 +1,6 @@
 package com.team03.monew.dto.comment.mapper;
 
-import com.team03.monew.dto.comment.request.CommentLikeDto;
+import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.entity.Comment;
 import com.team03.monew.entity.CommentLike;
 import com.team03.monew.entity.User;

@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor
-public class Comment extends BaseTimeEntity{
+public class Comment extends BaseTimeEntity {
 
   @Id
   private UUID id;
@@ -36,7 +36,8 @@ public class Comment extends BaseTimeEntity{
   @Column(nullable = false)
   private int likeCount = 0;
 
-  private Boolean deleted;
+
+  private Boolean deleted = false;
 
 
   @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -81,4 +82,13 @@ public class Comment extends BaseTimeEntity{
     this.deleted = true;
   }
 
+  public void updateContent(String content) {
+    if (content != null) {
+      this.content = content;
+    }
+  }
+
+  public boolean isDeleted() {
+    return deleted;
+  }
 }

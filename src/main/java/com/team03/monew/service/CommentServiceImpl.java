@@ -2,8 +2,9 @@ package com.team03.monew.service;
 
 import com.team03.monew.dto.comment.mapper.CommentLikesMapper;
 import com.team03.monew.dto.comment.mapper.CommentMapper;
-import com.team03.monew.dto.comment.request.CommentLikeDto;
+import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
+import com.team03.monew.dto.comment.request.CommentUpdateRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
 import com.team03.monew.entity.Comment;
 import com.team03.monew.entity.CommentLike;
@@ -156,5 +157,34 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment); // 실제 DB 삭제
     }
 
+    @Override
+    @Transactional
+    public CommentDto updateComment(UUID commentId, UUID userId, CommentUpdateRequest commentUpdateRequest) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("UUID", "commentId", commentId.toString()),
+                        ExceptionType.COMMENT
+                ));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomException(
+                    ErrorCode.FORBIDDEN,
+                    new ErrorDetail("UUID", "userId", userId.toString()),
+                    ExceptionType.USER
+            );
+        }
+
+        if (comment.isDeleted()) {
+            throw new CustomException(
+                    ErrorCode.INVALID_INPUT_VALUE,
+                    new ErrorDetail("Boolean", "deleted", "true"),
+                    ExceptionType.COMMENT
+            );
+        }
+
+        comment.updateContent(commentUpdateRequest.content());
+        return CommentMapper.toCommentDto(comment);
+    }
 
 }

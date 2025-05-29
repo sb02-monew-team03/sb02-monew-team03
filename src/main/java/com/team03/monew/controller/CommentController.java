@@ -1,14 +1,17 @@
 package com.team03.monew.controller;
 
-import com.team03.monew.dto.comment.request.CommentLikeDto;
+import com.team03.monew.dto.comment.request.CommentUpdateRequest;
+import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
 import com.team03.monew.service.CommentService;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,5 +62,14 @@ public class CommentController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(
+            @PathVariable UUID commentId,
+            @RequestParam UUID userId,
+            @RequestBody CommentUpdateRequest content
+            ) {
+        CommentDto updated = commentService.updateComment(commentId, userId, content);
+        return ResponseEntity.ok(updated);
+    }
 
 }
