@@ -1,6 +1,5 @@
 package com.team03.monew.dto.comment.response;
 
-import com.team03.monew.entity.NewsArticle;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

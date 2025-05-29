@@ -5,6 +5,7 @@ import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
 import com.team03.monew.service.CommentService;
+import jakarta.validation.Valid;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentDto> createComment(@RequestBody CommentRegisterRequest commentRegisterRequest) {
+    public ResponseEntity<CommentDto> createComment(@Valid @RequestBody CommentRegisterRequest commentRegisterRequest) {
         CommentDto registerComment = commentService.registerComment(commentRegisterRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(registerComment);
     }
@@ -66,10 +67,11 @@ public class CommentController {
     public ResponseEntity<CommentDto> updateComment(
             @PathVariable UUID commentId,
             @RequestParam UUID userId,
-            @RequestBody CommentUpdateRequest content
-            ) {
-        CommentDto updated = commentService.updateComment(commentId, userId, content);
+            @Valid @RequestBody CommentUpdateRequest request
+    ) {
+        CommentDto updated = commentService.updateComment(commentId, userId, request);
         return ResponseEntity.ok(updated);
     }
+
 
 }
