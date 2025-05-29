@@ -8,6 +8,10 @@ import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.entity.QInterest;
+import com.team03.monew.exception.CustomException;
+import com.team03.monew.exception.ErrorCode;
+import com.team03.monew.exception.ErrorDetail;
+import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.Custom.InterestRepositoryCustom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,9 +44,14 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
 
     // 정렬 조건 설정
     OrderSpecifier<?> sort = switch (orderBy) {
+
       case "name" -> direction.equalsIgnoreCase("DESC") ? interest.name.desc() : interest.name.asc();
       case "subscriberCount" -> direction.equalsIgnoreCase("DESC") ? interest.subscriberCount.desc() : interest.subscriberCount.asc();
-      default -> interest.name.asc(); // 기본 정렬
+      default -> throw new CustomException(
+          ErrorCode.INVALID_INPUT_VALUE,
+          new ErrorDetail("name | subscriberCount", "orderBy", orderBy),
+          ExceptionType.INTEREST
+      ); // 기본 정렬
     };
 
     // 쿼리 실행
