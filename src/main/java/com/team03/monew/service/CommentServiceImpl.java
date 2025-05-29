@@ -83,4 +83,35 @@ public class CommentServiceImpl implements CommentService {
         comment.increaseLikeCount();
         return CommentLikesMapper.toCommentLikeDto(commentLikeRepository.save(commentLike));
     }
+
+    @Override
+    @Transactional
+    public void cancelCommentLike(UUID commentId, UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("UUID", "userId", userId.toString()),
+                        ExceptionType.USER
+                ));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("UUID", "commentId", commentId.toString()),
+                        ExceptionType.COMMENT
+                ));
+
+        CommentLike commentLike = commentLikeRepository.findByCommentAndUser(comment, user)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("RELATION", "comment-user", commentId + "/" + userId),
+                        ExceptionType.COMMENT
+                ));
+
+        // 좋아요 취소 처리
+        comment.removeCommentLike(commentLike); // 연관관계 정리
+        comment.decreaseLikeCount();
+        commentLikeRepository.delete(commentLike);
+    }
+
 }

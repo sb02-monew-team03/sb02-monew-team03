@@ -10,4 +10,7 @@ public interface CommentService {
     public CommentDto registerComment(CommentRegisterRequest commentRegisterRequest);
 
     public CommentLikeDto commentLikes(UUID commentId, UUID userId);
+
+    public void cancelCommentLike(UUID commentId, UUID userId);
+
 }
