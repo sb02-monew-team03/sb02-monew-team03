@@ -13,12 +13,13 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "news_articles")
 public class NewsArticle {
   @Id @GeneratedValue
-  private Long id;
+  private UUID id;
 
   @Column(nullable = false)
   private String source;
