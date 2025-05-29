@@ -3,17 +3,22 @@ package com.team03.monew.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.util.UUID;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "comments")
-public class Comment {
-  @Id @GeneratedValue
-  private Long id;
+@NoArgsConstructor
+public class Comment extends BaseTimeEntity{
+
+  @Id
+  private String id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private NewsArticle news;
@@ -25,13 +30,20 @@ public class Comment {
   private String content;
 
   @Column(nullable = false)
-  private LocalDateTime createdAt = LocalDateTime.now();
-
-  @Column(nullable = false)
   private int likeCount = 0;
 
   @Column(nullable = false)
   private boolean deleted = false;
 
-  // getter/setter
+  @Builder
+  public Comment(String uuId, NewsArticle news, User user, String content, int likeCount, boolean deleted) {
+    this.id = UUID.randomUUID().toString();
+    this.news = news;
+    this.user = user;
+    this.content = content;
+    this.likeCount = likeCount;
+    this.deleted = deleted;
+  }
+
+
 }
