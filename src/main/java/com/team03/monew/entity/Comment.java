@@ -62,5 +62,7 @@ public class Comment extends BaseTimeEntity{
     }
   }
 
-
+  public void setNews(NewsArticle news) {
+    this.news = news;
+  }
 }
