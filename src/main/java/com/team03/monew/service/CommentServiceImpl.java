@@ -16,7 +16,7 @@ import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
-import com.team03.monew.repository.CommentRepository;
+import com.team03.monew.repository.CommentRepositoryCustom;
 import com.team03.monew.util.OrderBy;
 import com.team03.monew.util.SortDirection;
 import com.team03.monew.util.EntityFinder;
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepository commentRepository;
+    private final CommentRepositoryCustom commentRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final EntityFinder entityFinder;
 
