@@ -1,4 +1,4 @@
-package com.team03.monew.redis.controller;
+package com.team03.monew.redis.config;
 
 import com.team03.monew.redis.service.CommentLikeRedisService;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ public class CommentLikeRedisController {
 
     @PostMapping("/{commentId}/like")
     public ResponseEntity<Void> increaseLike(@PathVariable Long commentId) {
-        commentLikeRedisService.increaseLikeCount(commentId);
+        commentLikeRedisService.increaseLikeCountV1(commentId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{commentId}/like")
     public ResponseEntity<Void> decreaseLike(@PathVariable Long commentId) {
-        commentLikeRedisService.decreaseLikeCount(commentId);
+        commentLikeRedisService.decreaseLikeCountV1(commentId);
         return ResponseEntity.ok().build();
     }
 

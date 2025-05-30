@@ -13,14 +13,25 @@ public class CommentLikeRedisService {
     private final RedisService redisService;
     private static final String PREFIX = "comment:like-count:";
 
-    public void increaseLikeCount(Long commentId) {
+
+    // 좋아요 수 증가 (원자적)
+    public void increaseLikeCountV2(Long commentId) {
+        redisService.increment(getKey(commentId));
+    }
+
+    // 좋아요 수 감소 (원자적)
+    public void decreaseLikeCountV2(Long commentId) {
+        redisService.decrement(getKey(commentId));
+    }
+
+    public void increaseLikeCountV1(Long commentId) {
         String key = getKey(commentId);
         int currentCount = getLikeCount(commentId);
         int updatedCount = currentCount + 1;
         redisService.set(key, updatedCount);
     }
 
-    public void decreaseLikeCount(Long commentId) {
+    public void decreaseLikeCountV1(Long commentId) {
         String key = getKey(commentId);
         int currentCount = getLikeCount(commentId);
         int updatedCount = 0;

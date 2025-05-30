@@ -13,6 +13,17 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     // ========== Key-Value ==========
+
+    public Long increment(String key) {
+        return redisTemplate.opsForValue().increment(key);
+    }
+
+    public Long decrement(String key) {
+        return redisTemplate.opsForValue().decrement(key);
+    }
+
+
+    // ========== Key-Value ==========
     public void set(String key, Object value) {
         redisTemplate.opsForValue().set(key, value);
     }
