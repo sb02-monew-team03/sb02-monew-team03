@@ -3,6 +3,7 @@ package com.team03.monew.service;
 import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.dto.interest.InterestRegisterRequest;
+import com.team03.monew.dto.interest.InterestUpdateRequest;
 import com.team03.monew.dto.interest.mapper.InterestMapper;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.exception.CustomException;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +54,19 @@ public class InterestService {
     return InterestMapper.toDto(interest);
   }
 
+  @Transactional
+  public void updateKeywords(UUID interestId, List<String> newKeywords) {
+    Interest interest = interestRepository.findById(interestId)
+        .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, new ErrorDetail(
+            "interest","interesdId","interest"
+        ), ExceptionType.INTEREST));
+
+    interest.getKeywords().clear();
+    interest.getKeywords().addAll(newKeywords);
+
+    // 변경 감지로 자동 저장 (save 호출 안 해도 됨)
+    interestRepository.save(interest); // 선택적
+  }
   public Optional<CursorPageResponseInterestDto>  searchInterests(
       UUID userId,
       String keyword,
