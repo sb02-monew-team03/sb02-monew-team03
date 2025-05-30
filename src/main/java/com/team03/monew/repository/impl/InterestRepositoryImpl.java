@@ -1,4 +1,4 @@
-package com.team03.monew.repository.impi;
+package com.team03.monew.repository.impl;
 
 
 import com.querydsl.core.BooleanBuilder;
@@ -12,7 +12,7 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
-import com.team03.monew.repository.Custom.InterestRepositoryCustom;
+import com.team03.monew.repository.custom.InterestRepositoryCustom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
