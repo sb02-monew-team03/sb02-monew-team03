@@ -1,19 +1,24 @@
 package com.team03.monew.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.team03.monew.dto.newsArticle.ArticleViewDto;
+import com.team03.monew.dto.newsArticle.response.ArticleDto;
+import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
+import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
 import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.service.NewsArticleService;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -82,6 +87,57 @@ class NewsArticleControllerTest {
         mockMvc.perform(post("/api/articles/{articleId}/article-views", articleId)
                 .header("MoNew-Request-User-ID", userId))
             .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    @DisplayName("뉴스 기사 목록 조회 성공")
+    void getArticles_Success() throws Exception {
+        CursorPageResponseArticleDto response = createMockResponse();
+        given(newsArticleService.searchArticles(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+            .willReturn(response);
+
+        mockMvc.perform(get("/api/articles")
+                .param("orderBy", "publishDate")
+                .param("direction", "DESC")
+                .header("Monew-Request-User-ID", UUID.randomUUID().toString()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[0].title").value("AI 혁명: OpenAI의 미래"));
+    }
+
+    @Test
+    @DisplayName("정렬 기준이 잘못 되었을 경우")
+    void getArticles_InvalidOrderBy_BadRequest() throws Exception {
+        mockMvc.perform(get("/api/articles")
+                .param("orderBy", "wrong")
+                .param("direction", "DESC")
+                .header("Monew-Request-User-ID", UUID.randomUUID().toString()))
+            .andExpect(status().isBadRequest());
+    }
+
+    public static ArticleDto createMockArticle() {
+        return new ArticleDto(
+            UUID.randomUUID(),
+            "naver",
+            "https://example.com/thumbnail.jpg",
+            "AI 혁명: OpenAI의 미래",
+            LocalDateTime.of(2025, 5, 30, 10, 0),
+            "OpenAI는 GPT-5를 공개하며...",
+            15,
+            120,
+            true
+        );
+    }
+
+    public static CursorPageResponseArticleDto createMockResponse() {
+        return new CursorPageResponseArticleDto(
+            List.of(createMockArticle()),
+            "nextCursor123",
+            LocalDateTime.of(2025, 5, 30, 9, 0),
+            50,
+            100,
+            true
+        );
     }
 
 }

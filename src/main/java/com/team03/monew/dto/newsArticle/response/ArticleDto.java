@@ -1,4 +1,4 @@
-package com.team03.monew.dto.newsArticle;
+package com.team03.monew.dto.newsArticle.response;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

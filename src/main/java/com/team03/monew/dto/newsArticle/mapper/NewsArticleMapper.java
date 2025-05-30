@@ -1,6 +1,6 @@
 package com.team03.monew.dto.newsArticle.mapper;
 
-import com.team03.monew.dto.newsArticle.ArticleDto;
+import com.team03.monew.dto.newsArticle.response.ArticleDto;
 import com.team03.monew.entity.NewsArticle;
 
 public class NewsArticleMapper {

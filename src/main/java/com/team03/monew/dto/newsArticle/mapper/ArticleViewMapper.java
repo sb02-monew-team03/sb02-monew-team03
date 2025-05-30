@@ -1,6 +1,6 @@
 package com.team03.monew.dto.newsArticle.mapper;
 
-import com.team03.monew.dto.newsArticle.ArticleViewDto;
+import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
 import com.team03.monew.entity.ArticleView;
 import com.team03.monew.entity.NewsArticle;
 
