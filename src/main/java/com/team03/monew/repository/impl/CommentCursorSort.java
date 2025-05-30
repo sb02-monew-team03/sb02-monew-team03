@@ -3,8 +3,8 @@ package com.team03.monew.repository.impl;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.team03.monew.entity.QComment;
-import com.team03.monew.repository.SortDirection;
-import com.team03.monew.repository.OrderBy;
+import com.team03.monew.util.SortDirection;
+import com.team03.monew.util.OrderBy;
 
 public class CommentCursorSort {
 

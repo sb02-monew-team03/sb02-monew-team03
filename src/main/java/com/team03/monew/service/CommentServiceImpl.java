@@ -17,6 +17,7 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
 import com.team03.monew.repository.CommentRepository;
+import com.team03.monew.repository.Custom.CommentCustomRepository;
 import com.team03.monew.repository.NewsArticleRepository;
 import com.team03.monew.repository.OrderBy;
 import com.team03.monew.repository.SortDirection;
@@ -34,11 +35,10 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
-    private final UserRepository userRepository;
-    private final NewsArticleRepository newsArticleRepository;
+    private final EntityFinder entityFinder;
 
     @Transactional(readOnly = true)
-    public CursorPageResponseCommentDto<Comment> commentCursorPage(
+    public CursorPageResponseCommentDto<CommentDto> commentCursorPage(
             UUID articleId,
             OrderBy orderBy,
             SortDirection direction,

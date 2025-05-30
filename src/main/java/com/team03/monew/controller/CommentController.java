@@ -5,9 +5,8 @@ import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
 import com.team03.monew.dto.comment.response.CursorPageResponseCommentDto;
-import com.team03.monew.entity.Comment;
-import com.team03.monew.repository.OrderBy;
-import com.team03.monew.repository.SortDirection;
+import com.team03.monew.util.OrderBy;
+import com.team03.monew.util.SortDirection;
 import com.team03.monew.service.CommentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -37,7 +36,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping()
-    public CursorPageResponseCommentDto<Comment> getCommentsWithCursorPaging(
+    public CursorPageResponseCommentDto<CommentDto> getCommentsWithCursorPaging(
             @RequestParam("articleId") UUID articleId,
             @RequestParam("orderBy") OrderBy orderBy,
             @RequestParam("direction") SortDirection direction,
