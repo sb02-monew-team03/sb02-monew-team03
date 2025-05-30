@@ -7,7 +7,7 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
-import com.team03.monew.repository.CommentRepository;
+import com.team03.monew.repository.CommentRepositoryCustom;
 import com.team03.monew.repository.NewsArticleRepository;
 import com.team03.monew.repository.UserRepository;
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class EntityFinder {
 
     private final UserRepository userRepository;
     private final NewsArticleRepository newsArticleRepository;
-    private final CommentRepository commentRepository;
+    private final CommentRepositoryCustom commentRepository;
 
     public User getUserOrThrow(UUID userId) {
         return userRepository.findById(userId)
