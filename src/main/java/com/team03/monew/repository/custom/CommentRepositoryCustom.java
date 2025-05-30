@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface CommentCustomRepository {
+public interface CommentRepositoryCustom {
 
     List<Comment> findByArticleWithCursorPaging(
             UUID articleId,
