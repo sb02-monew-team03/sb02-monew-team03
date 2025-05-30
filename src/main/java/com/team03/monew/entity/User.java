@@ -8,28 +8,34 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
 @Getter
-public class User {
-  @Id
-  @GeneratedValue
-  private UUID id;
+@NoArgsConstructor
+public class User extends BaseTimeEntity {
 
-  @Column(nullable = false, unique = true)
-  private String email;
+    @Id
+    @GeneratedValue
+    private UUID id;
 
-  @Column(nullable = false, length = 50)
-  private String nickname;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-  @Column(nullable = false)
-  private String password;
+    @Column(nullable = false, length = 50)
+    private String nickname;
 
-  @Column(nullable = false)
-  private boolean deleted = false;
+    @Column(nullable = false)
+    private String password;
 
-  // 연관 관계 생략 가능 (ex. 관심사, 댓글 등)
+    @Column(nullable = false)
+    private boolean deleted = false;
 
-  // getter/setter
+    public User(String email, String nickname, String password) {
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.deleted = false;
+    }
 }
