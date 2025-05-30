@@ -37,7 +37,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping()
-    public CursorPageResponseCommentDto<Comment> getCommentsWithCursorPaging(
+    public CursorPageResponseCommentDto<CommentDto> getCommentsWithCursorPaging(
             @RequestParam("articleId") UUID articleId,
             @RequestParam("orderBy") OrderBy orderBy,
             @RequestParam("direction") SortDirection direction,

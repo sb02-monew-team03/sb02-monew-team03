@@ -17,7 +17,6 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
 import com.team03.monew.repository.CommentRepository;
-import com.team03.monew.repository.Custom.CommentCustomRepository;
 import com.team03.monew.repository.NewsArticleRepository;
 import com.team03.monew.repository.OrderBy;
 import com.team03.monew.repository.SortDirection;
@@ -39,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
     private final NewsArticleRepository newsArticleRepository;
 
     @Transactional(readOnly = true)
-    public CursorPageResponseCommentDto<Comment> commentCursorPage(
+    public CursorPageResponseCommentDto<CommentDto> commentCursorPage(
             UUID articleId,
             OrderBy orderBy,
             SortDirection direction,
@@ -68,6 +67,8 @@ public class CommentServiceImpl implements CommentService {
                 articleId, orderBy, direction, cursor, after, limit, requesterId
         );
 
+        List<CommentDto> commentDtoList = comments.stream().map(CommentMapper::toCommentDto).toList();
+
         boolean hasNext = comments.size() == limit;
         LocalDateTime nextAfter = null;
         UUID nextCursor = null;
@@ -82,8 +83,8 @@ public class CommentServiceImpl implements CommentService {
         }else {
             nextCursor = null;
         }
-        return CursorPageResponseCommentDto.<Comment>builder()
-                .content(comments)
+        return CursorPageResponseCommentDto.<CommentDto>builder()
+                .content(commentDtoList)
                 .nextCursor(nextCursor.toString())
                 .nextAfter(nextAfter)
                 .size(limit)
