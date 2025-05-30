@@ -1,8 +1,8 @@
 package com.team03.monew.repository.Custom;
 
 import com.team03.monew.entity.Comment;
-import com.team03.monew.repository.OrderBy;
-import com.team03.monew.repository.SortDirection;
+import com.team03.monew.util.OrderBy;
+import com.team03.monew.util.SortDirection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

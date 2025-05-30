@@ -2,8 +2,8 @@ package com.team03.monew.repository.impi;
 
 import com.querydsl.core.BooleanBuilder;
 import com.team03.monew.entity.QComment;
-import com.team03.monew.repository.SortDirection;
-import com.team03.monew.repository.OrderBy;
+import com.team03.monew.util.SortDirection;
+import com.team03.monew.util.OrderBy;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

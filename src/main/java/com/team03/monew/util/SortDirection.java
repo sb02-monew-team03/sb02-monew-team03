@@ -1,4 +1,4 @@
-package com.team03.monew.repository;
+package com.team03.monew.util;
 
 import com.querydsl.core.types.Order;
 
