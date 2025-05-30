@@ -1,4 +1,4 @@
-package com.team03.monew.repository.Custom;
+package com.team03.monew.repository.custom;
 
 import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import java.time.LocalDateTime;

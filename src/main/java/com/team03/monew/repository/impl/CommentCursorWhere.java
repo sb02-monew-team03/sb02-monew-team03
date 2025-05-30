@@ -1,4 +1,4 @@
-package com.team03.monew.repository.impi;
+package com.team03.monew.repository.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.team03.monew.entity.QComment;
