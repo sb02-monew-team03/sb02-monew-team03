@@ -6,6 +6,7 @@ import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.request.CommentUpdateRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
+import com.team03.monew.dto.comment.response.CursorPageResponseCommentDto;
 import com.team03.monew.entity.Comment;
 import com.team03.monew.entity.CommentLike;
 import com.team03.monew.entity.NewsArticle;
@@ -16,12 +17,17 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
 import com.team03.monew.repository.CommentRepository;
+import com.team03.monew.repository.Custom.CommentCustomRepository;
 import com.team03.monew.repository.NewsArticleRepository;
+import com.team03.monew.repository.OrderBy;
+import com.team03.monew.repository.SortDirection;
 import com.team03.monew.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +37,60 @@ public class CommentServiceImpl implements CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
     private final NewsArticleRepository newsArticleRepository;
+
+    @Transactional(readOnly = true)
+    public CursorPageResponseCommentDto<Comment> commentCursorPage(
+            UUID articleId,
+            OrderBy orderBy,
+            SortDirection direction,
+            UUID cursor,
+            LocalDateTime after,
+            int limit,
+            UUID requesterId
+    ) {
+
+        User user = userRepository.findById(requesterId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("UUID", "userId", ExceptionType.USER.toString()),
+                        ExceptionType.USER
+                ));
+
+        NewsArticle newsArticle = newsArticleRepository.findById(articleId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("UUID", "articleId", ExceptionType.NEWSARTICLE.toString()),
+                        ExceptionType.NEWSARTICLE
+                ));
+
+
+        List<Comment> comments = commentRepository.findByArticleWithCursorPaging(
+                articleId, orderBy, direction, cursor, after, limit, requesterId
+        );
+
+        boolean hasNext = comments.size() == limit;
+        LocalDateTime nextAfter = null;
+        UUID nextCursor = null;
+        if (hasNext) {
+            Comment last = comments.get(comments.size() - 1);
+            nextCursor = last.getId();
+            nextAfter = last.getCreatedAt();
+        }
+
+        if (nextCursor != null) {
+            nextCursor = nextCursor;
+        }else {
+            nextCursor = null;
+        }
+        return CursorPageResponseCommentDto.<Comment>builder()
+                .content(comments)
+                .nextCursor(nextCursor.toString())
+                .nextAfter(nextAfter)
+                .size(limit)
+                .totalElements(comments.size())
+                .hasNext(hasNext)
+                .build();
+    }
 
 
     @Override
