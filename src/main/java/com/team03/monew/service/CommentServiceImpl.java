@@ -2,10 +2,10 @@ package com.team03.monew.service;
 
 import com.team03.monew.dto.comment.mapper.CommentLikesMapper;
 import com.team03.monew.dto.comment.mapper.CommentMapper;
-import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.request.CommentUpdateRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
+import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.response.CursorPageResponseCommentDto;
 import com.team03.monew.entity.Comment;
 import com.team03.monew.entity.CommentLike;
@@ -17,11 +17,9 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
 import com.team03.monew.repository.CommentRepository;
-import com.team03.monew.repository.Custom.CommentCustomRepository;
-import com.team03.monew.repository.NewsArticleRepository;
-import com.team03.monew.repository.OrderBy;
-import com.team03.monew.repository.SortDirection;
-import com.team03.monew.repository.UserRepository;
+import com.team03.monew.util.OrderBy;
+import com.team03.monew.util.SortDirection;
+import com.team03.monew.util.EntityFinder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -47,25 +45,16 @@ public class CommentServiceImpl implements CommentService {
             int limit,
             UUID requesterId
     ) {
-
-        User user = userRepository.findById(requesterId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "userId", ExceptionType.USER.toString()),
-                        ExceptionType.USER
-                ));
-
-        NewsArticle newsArticle = newsArticleRepository.findById(articleId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "articleId", ExceptionType.NEWSARTICLE.toString()),
-                        ExceptionType.NEWSARTICLE
-                ));
-
+        entityFinder.getUserOrThrow(requesterId);
+        entityFinder.getNewsArticleOrThrow(articleId);
 
         List<Comment> comments = commentRepository.findByArticleWithCursorPaging(
                 articleId, orderBy, direction, cursor, after, limit, requesterId
         );
+
+        List<CommentDto> commentDtoList = comments.stream()
+                .map(CommentMapper::toCommentDto)
+                .toList();
 
         boolean hasNext = comments.size() == limit;
         LocalDateTime nextAfter = null;
@@ -76,14 +65,9 @@ public class CommentServiceImpl implements CommentService {
             nextAfter = last.getCreatedAt();
         }
 
-        if (nextCursor != null) {
-            nextCursor = nextCursor;
-        }else {
-            nextCursor = null;
-        }
-        return CursorPageResponseCommentDto.<Comment>builder()
-                .content(comments)
-                .nextCursor(nextCursor.toString())
+        return CursorPageResponseCommentDto.<CommentDto>builder()
+                .content(commentDtoList)
+                .nextCursor(nextCursor != null ? nextCursor.toString() : null)
                 .nextAfter(nextAfter)
                 .size(limit)
                 .totalElements(comments.size())
@@ -91,42 +75,21 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
-
     @Override
     @Transactional
-    public CommentDto registerComment(CommentRegisterRequest commentRegisterRequest) {
-        User user = userRepository.findById(commentRegisterRequest.userId())
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "userId", ExceptionType.USER.toString()),
-                        ExceptionType.USER
-                ));
+    public CommentDto registerComment(CommentRegisterRequest request) {
+        User user = entityFinder.getUserOrThrow(request.userId());
+        NewsArticle article = entityFinder.getNewsArticleOrThrow(request.articleId());
 
-        NewsArticle newsArticle = newsArticleRepository.findById(commentRegisterRequest.articleId())
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "articleId", ExceptionType.NEWSARTICLE.toString()),
-                        ExceptionType.NEWSARTICLE
-                ));
-        Comment comment = CommentMapper.toComment(commentRegisterRequest.comment(), newsArticle, user);
+        Comment comment = CommentMapper.toComment(request.comment(), article, user);
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
     @Override
     @Transactional
     public CommentLikeDto commentLikes(UUID commentId, UUID userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "userId", ExceptionType.USER.toString()),
-                        ExceptionType.USER
-                ));
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "commentId", ExceptionType.COMMENT.toString()),
-                        ExceptionType.COMMENT
-                ));
+        User user = entityFinder.getUserOrThrow(userId);
+        Comment comment = entityFinder.getCommentOrThrow(commentId);
 
         if (commentLikeRepository.existsByCommentAndUser(comment, user)) {
             throw new CustomException(
@@ -137,29 +100,17 @@ public class CommentServiceImpl implements CommentService {
         }
 
         CommentLike commentLike = CommentLikesMapper.toCommentLike(comment, user);
-
-        comment.addCommentLike(commentLike); // 연관관계 편의 메서드
-        // 좋아요 수 증가
+        comment.addCommentLike(commentLike);  // 연관관계 메서드
         comment.increaseLikeCount();
+
         return CommentLikesMapper.toCommentLikeDto(commentLikeRepository.save(commentLike));
     }
 
     @Override
     @Transactional
     public void cancelCommentLike(UUID commentId, UUID userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "userId", userId.toString()),
-                        ExceptionType.USER
-                ));
-
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "commentId", commentId.toString()),
-                        ExceptionType.COMMENT
-                ));
+        User user = entityFinder.getUserOrThrow(userId);
+        Comment comment = entityFinder.getCommentOrThrow(commentId);
 
         CommentLike commentLike = commentLikeRepository.findByCommentAndUser(comment, user)
                 .orElseThrow(() -> new CustomException(
@@ -168,8 +119,7 @@ public class CommentServiceImpl implements CommentService {
                         ExceptionType.COMMENT
                 ));
 
-        // 좋아요 취소 처리
-        comment.removeCommentLike(commentLike); // 연관관계 정리
+        comment.removeCommentLike(commentLike);
         comment.decreaseLikeCount();
         commentLikeRepository.delete(commentLike);
     }
@@ -177,12 +127,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void softDeleteComment(UUID commentId, UUID userId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "commentId", commentId.toString()),
-                        ExceptionType.COMMENT
-                ));
+        Comment comment = entityFinder.getCommentOrThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(
@@ -198,12 +143,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void hardDeleteComment(UUID commentId, UUID userId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "commentId", commentId.toString()),
-                        ExceptionType.COMMENT
-                ));
+        Comment comment = entityFinder.getCommentOrThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(
@@ -213,18 +153,13 @@ public class CommentServiceImpl implements CommentService {
             );
         }
 
-        commentRepository.delete(comment); // 실제 DB 삭제
+        commentRepository.delete(comment);
     }
 
     @Override
     @Transactional
-    public CommentDto updateComment(UUID commentId, UUID userId, CommentUpdateRequest commentUpdateRequest) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "commentId", commentId.toString()),
-                        ExceptionType.COMMENT
-                ));
+    public CommentDto updateComment(UUID commentId, UUID userId, CommentUpdateRequest request) {
+        Comment comment = entityFinder.getCommentOrThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(
@@ -242,8 +177,7 @@ public class CommentServiceImpl implements CommentService {
             );
         }
 
-        comment.updateContent(commentUpdateRequest.content());
+        comment.updateContent(request.content());
         return CommentMapper.toCommentDto(comment);
     }
-
 }
