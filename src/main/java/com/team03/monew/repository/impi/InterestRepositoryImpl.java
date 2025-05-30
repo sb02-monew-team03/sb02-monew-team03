@@ -17,9 +17,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 // InterestRepositoryImpl.java
 @RequiredArgsConstructor
+@Repository
 public class InterestRepositoryImpl implements InterestRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
