@@ -17,7 +17,6 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
 import com.team03.monew.repository.CommentRepository;
-import com.team03.monew.repository.Custom.CommentCustomRepository;
 import com.team03.monew.repository.NewsArticleRepository;
 import com.team03.monew.repository.OrderBy;
 import com.team03.monew.repository.SortDirection;
