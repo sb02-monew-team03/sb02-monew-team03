@@ -1,4 +1,4 @@
-package com.team03.monew.repository.Custom;
+package com.team03.monew.repository.custom;
 
 import com.team03.monew.entity.Comment;
 import com.team03.monew.util.OrderBy;
