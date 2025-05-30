@@ -4,6 +4,7 @@ import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.dto.interest.InterestRegisterRequest;
 import com.team03.monew.service.InterestService;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class InterestController {
   private final InterestService interestService;
 
   @PostMapping
-  public ResponseEntity<InterestDto> registerInterest(@RequestBody @Validated InterestRegisterRequest request) {
+  public ResponseEntity<InterestDto> registerInterest(@RequestBody @Valid InterestRegisterRequest request) {
     InterestDto result = interestService.registerInterest(request);
     return ResponseEntity.ok(result);
   }
