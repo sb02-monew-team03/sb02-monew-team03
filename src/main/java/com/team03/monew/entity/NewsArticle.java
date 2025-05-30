@@ -61,5 +61,9 @@ public class NewsArticle {
     comment.setNews(null);
   }
 
+  public void increaseViewCount() {
+    this.viewCount++;
+  }
+
   // getter/setter
 }
