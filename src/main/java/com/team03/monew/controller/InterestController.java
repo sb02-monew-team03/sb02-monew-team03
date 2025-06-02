@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +36,7 @@ public class InterestController {
     return ResponseEntity.ok(result);
   }
 
-  @PatchMapping("/{id}/keywords")
+  @PatchMapping("/{id}")
   public ResponseEntity<Void> updateInterestKeywords(
       @PathVariable UUID id,
       @RequestBody @Valid InterestUpdateRequest request
@@ -59,5 +60,29 @@ public class InterestController {
         userId, keyword, orderBy, direction, cursor, after, limit
     ).orElseThrow();
     return ResponseEntity.ok(result);
+  }
+
+  @PostMapping("/{interestId}/subscriptions")
+  public ResponseEntity<InterestDto> subscribe(
+      @PathVariable UUID interestId,
+      @RequestHeader("Monew-Request-User-ID") UUID userId
+  ) {
+    InterestDto dto = interestService.subscribe(interestId, userId);
+    return ResponseEntity.ok(dto);
+  }
+
+  @DeleteMapping("/{interestId}/subscriptions")
+  public ResponseEntity<Void> unsubscribe(
+      @PathVariable UUID interestId,
+      @RequestHeader("Monew-Request-User-ID") UUID userId
+  ) {
+    interestService.unsubscribe(interestId, userId);
+    return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/{interestId}")
+  public ResponseEntity<Void> deleteInterest(@PathVariable UUID interestId) {
+    interestService.delete(interestId);
+    return ResponseEntity.noContent().build();
   }
 }

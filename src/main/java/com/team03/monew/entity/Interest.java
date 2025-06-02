@@ -14,11 +14,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "interests")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,4 +40,5 @@ public class Interest {
   @Column(nullable = false)
   private LocalDateTime createdAt = LocalDateTime.now();
   // getter/setter
+
 }
