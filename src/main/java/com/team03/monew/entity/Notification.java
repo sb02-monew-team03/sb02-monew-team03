@@ -12,10 +12,12 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "notifications")
 @Getter
+@Setter
 public class Notification {
   @Id @GeneratedValue
   private UUID id;
