@@ -3,6 +3,9 @@ package com.team03.monew.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -140,6 +143,42 @@ class NewsArticleControllerTest {
             .andExpect(jsonPath("$.code").value("INTERNAL_SERVER_ERROR"))
             .andExpect(jsonPath("$.exceptionType").value("IllegalStateException"));
     }
+
+    // 논리 삭제
+    @Test
+    @DisplayName("뉴스 기사 논리 삭제 성공")
+    void deleteArticle_Success() throws Exception {
+        UUID articleId = UUID.randomUUID();
+
+        // 서비스 계층이 void니까 별도 stubbing 없이 진행
+        willDoNothing().given(newsArticleService).deleteLogically(articleId);
+
+        mockMvc.perform(delete("/api/articles/{id}", articleId))
+            .andExpect(status().isNoContent()); // 204
+    }
+
+    @DisplayName("뉴스 기사 논리 삭제 실패 - 존재하지 않는 기사")
+    @Test
+    void deleteArticle_Fail_NotFound() throws Exception {
+        UUID articleId = UUID.randomUUID();
+
+        willThrow(new CustomException(
+            ErrorCode.RESOURCE_NOT_FOUND,
+            new ErrorDetail("UUID", "articleId", articleId.toString()),
+            ExceptionType.NEWSARTICLE
+        )).given(newsArticleService).deleteLogically(articleId);
+
+
+
+        mockMvc.perform(delete("/api/articles/{id}", articleId))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("RESOURCE_NOT_FOUND"))
+            .andExpect(jsonPath("$.exceptionType").value("NEWSARTICLE"))
+            .andExpect(jsonPath("$.details.parameter").value("articleId"))
+            .andExpect(jsonPath("$.details.value").value(articleId.toString()));
+    }
+
+
 
 
 

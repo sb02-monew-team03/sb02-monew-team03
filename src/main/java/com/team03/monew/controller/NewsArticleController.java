@@ -15,6 +15,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,6 +67,13 @@ public class NewsArticleController {
     @GetMapping("/sources")
     public ResponseEntity<SourcesResponseDto> getSources() {
         return ResponseEntity.ok(newsArticleService.getSources());
+    }
+
+    @DeleteMapping("/{articleId}")
+    public ResponseEntity<Void> deleteArticleLogical(@PathVariable UUID articleId) {
+        newsArticleService.deleteLogically(articleId);
+
+        return ResponseEntity.noContent().build();
     }
 
     private static final Set<String> VALID_ORDER_BY = Set.of("publishDate", "commentCount", "viewCount");

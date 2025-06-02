@@ -65,5 +65,9 @@ public class NewsArticle {
     this.viewCount++;
   }
 
+  // 논리 삭제
+  public void markAsDeleted() {
+    this.deleted = true;
+  }
   // getter/setter
 }
