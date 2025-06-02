@@ -103,6 +103,17 @@ public class NewsArticleService {
         article.markAsDeleted(); // 엔티티에서 delete를 true로 변경
     }
 
+    @Transactional
+    public void deletePhysically(UUID articleId) {
+        NewsArticle article = newsArticleRepository.findById(articleId)
+            .orElseThrow(() -> {
+                ErrorDetail detail = new ErrorDetail("UUID", "articleId", articleId.toString());
+                return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.NEWSARTICLE);
+            });
+
+        newsArticleRepository.delete(article);
+    }
+
     // 마지막 요소의 커서 인코딩
     public String encodeCursor(ArticleDto lastArticle) {
         // publishDate 기준

@@ -93,7 +93,6 @@ class NewsArticleControllerTest {
             .andExpect(status().isNotFound());
     }
 
-
     @Test
     @DisplayName("뉴스 기사 목록 조회 성공")
     void getArticles_Success() throws Exception {
@@ -168,8 +167,6 @@ class NewsArticleControllerTest {
             ExceptionType.NEWSARTICLE
         )).given(newsArticleService).deleteLogically(articleId);
 
-
-
         mockMvc.perform(delete("/api/articles/{id}", articleId))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.code").value("RESOURCE_NOT_FOUND"))
@@ -178,9 +175,35 @@ class NewsArticleControllerTest {
             .andExpect(jsonPath("$.details.value").value(articleId.toString()));
     }
 
+    @DisplayName("뉴스 기사 물리 삭제 성공")
+    @Test
+    void deleteArticlePhysically_Success() throws Exception {
+        UUID articleId = UUID.randomUUID();
 
+        willDoNothing().given(newsArticleService).deletePhysically(articleId);
 
+        mockMvc.perform(delete("/api/articles/{id}/hard", articleId))
+            .andExpect(status().isNoContent());
+    }
 
+    @DisplayName("뉴스 기사 물리 삭제 실패 - 존재하지 않는 기사")
+    @Test
+    void deleteArticlePhysically_Fail_NotFound() throws Exception {
+        UUID articleId = UUID.randomUUID();
+
+        willThrow(new CustomException(
+            ErrorCode.RESOURCE_NOT_FOUND,
+            new ErrorDetail("UUID", "articleId", articleId.toString()),
+            ExceptionType.NEWSARTICLE
+        )).given(newsArticleService).deletePhysically(articleId);
+
+        mockMvc.perform(delete("/api/articles/{id}/hard", articleId))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("RESOURCE_NOT_FOUND"))
+            .andExpect(jsonPath("$.exceptionType").value("NEWSARTICLE"))
+            .andExpect(jsonPath("$.details.parameter").value("articleId"))
+            .andExpect(jsonPath("$.details.value").value(articleId.toString()));
+    }
 
     public static ArticleDto createMockArticle() {
         return new ArticleDto(

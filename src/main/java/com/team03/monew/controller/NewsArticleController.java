@@ -72,13 +72,17 @@ public class NewsArticleController {
     @DeleteMapping("/{articleId}")
     public ResponseEntity<Void> deleteArticleLogical(@PathVariable UUID articleId) {
         newsArticleService.deleteLogically(articleId);
+        return ResponseEntity.noContent().build();
+    }
 
+    @DeleteMapping("/{articleId}/hard")
+    public ResponseEntity<Void> deleteArticleHard(@PathVariable UUID articleId) {
+        newsArticleService.deletePhysically(articleId);
         return ResponseEntity.noContent().build();
     }
 
     private static final Set<String> VALID_ORDER_BY = Set.of("publishDate", "commentCount", "viewCount");
     private static final Set<String> VALID_DIRECTION = Set.of("ASC", "DESC");
-
 
     private void validateOrderBy(String orderBy) {
         if (!VALID_ORDER_BY.contains(orderBy)) {
@@ -93,5 +97,4 @@ public class NewsArticleController {
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE, detail, ExceptionType.NEWSARTICLE);
         }
     }
-
 }
