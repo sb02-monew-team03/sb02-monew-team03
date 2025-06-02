@@ -6,6 +6,7 @@ import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
 import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
 import com.team03.monew.dto.newsArticle.mapper.ArticleViewMapper;
 import com.team03.monew.dto.newsArticle.mapper.NewsArticleMapper;
+import com.team03.monew.dto.newsArticle.response.SourcesResponseDto;
 import com.team03.monew.entity.ArticleView;
 import com.team03.monew.entity.NewsArticle;
 import com.team03.monew.exception.CustomException;
@@ -83,6 +84,12 @@ public class NewsArticleService {
         LocalDateTime nextAfter = hasNext ? articles.get(articles.size() - 1).publishDate() : null;
 
         return new CursorPageResponseArticleDto(articles, nextCursor, nextAfter, limit, result.size(), hasNext);
+    }
+
+    @Transactional(readOnly = true)
+    public SourcesResponseDto getSources() {
+        List<String> sources = newsArticleRepository.findDistinctSources();
+        return new SourcesResponseDto(sources);
     }
 
     // 마지막 요소의 커서 인코딩

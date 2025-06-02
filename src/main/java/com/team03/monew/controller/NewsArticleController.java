@@ -2,6 +2,7 @@ package com.team03.monew.controller;
 
 import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
 import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
+import com.team03.monew.dto.newsArticle.response.SourcesResponseDto;
 import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
@@ -60,6 +61,11 @@ public class NewsArticleController {
             orderBy, direction, cursor, after, limit, requestUserId
         );
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/sources")
+    public ResponseEntity<SourcesResponseDto> getSources() {
+        return ResponseEntity.ok(newsArticleService.getSources());
     }
 
     private static final Set<String> VALID_ORDER_BY = Set.of("publishDate", "commentCount", "viewCount");
