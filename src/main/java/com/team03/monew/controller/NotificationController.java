@@ -32,16 +32,6 @@ public class NotificationController {
     return ResponseEntity.ok(result);
   }
 
-  @GetMapping
-  public ResponseEntity<CursorPageResponseNotificationDto> getNotifications(
-      @RequestHeader("Monew-Request-User-ID") UUID userId,
-      @RequestParam(required = false) String cursor,
-      @RequestParam(required = false) LocalDateTime after,
-      @RequestParam int limit
-  ) {
-    CursorPageResponseNotificationDto response = notificationService.getNotifications(userId, cursor, after, limit);
-    return ResponseEntity.ok(response);
-  }
 
   @PatchMapping
   public ResponseEntity<Void> confirmAllNotifications(
