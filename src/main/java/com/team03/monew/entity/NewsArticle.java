@@ -52,9 +52,6 @@ public class NewsArticle {
   @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments = new ArrayList<>();
 
-  @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
-  private List<ArticleView> articleViews = new ArrayList<>();
-
   // 연관관계 편의 메서드
   public void addComment(Comment comment) {
     comments.add(comment);

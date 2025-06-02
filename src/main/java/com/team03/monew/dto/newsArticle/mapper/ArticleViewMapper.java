@@ -10,7 +10,7 @@ public class ArticleViewMapper {
         NewsArticle a = view.getArticle();
         return new ArticleViewDto(
             view.getId(),
-            view.getUserId(),
+            view.getUser().getId(),
             view.getCreatedAt(),
             a.getId(),
             a.getSource(),

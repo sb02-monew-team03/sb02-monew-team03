@@ -133,6 +133,7 @@ public class NewsArticleService {
                 return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.NEWSARTICLE);
             });
 
+        articleViewRepository.deleteByArticle(article);
         newsArticleRepository.delete(article);
     }
 
