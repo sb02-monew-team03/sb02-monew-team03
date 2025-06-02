@@ -16,4 +16,7 @@ public interface NewsArticleRepository extends JpaRepository<NewsArticle, UUID>,
     // 출처 목록 조회용
     @Query("SELECT DISTINCT n.source FROM NewsArticle n WHERE n.deleted = false")
     List<String> findDistinctSources();
+
+    // 복구용. 이미 데이터베이스에 존재하는지 확인
+    boolean existsByOriginalLink(String originalLink);
 }

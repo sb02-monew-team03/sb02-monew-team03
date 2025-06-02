@@ -1,22 +1,31 @@
 package com.team03.monew.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.team03.monew.dto.newsArticle.response.ArticleDto;
-import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
-import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
 import com.team03.monew.dto.newsArticle.mapper.ArticleViewMapper;
 import com.team03.monew.dto.newsArticle.mapper.NewsArticleMapper;
+import com.team03.monew.dto.newsArticle.response.ArticleDto;
+import com.team03.monew.dto.newsArticle.response.ArticleRestoreResultDto;
+import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
+import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
+import com.team03.monew.dto.newsArticle.response.NewsBackupDto;
 import com.team03.monew.dto.newsArticle.response.SourcesResponseDto;
 import com.team03.monew.entity.ArticleView;
+import com.team03.monew.entity.Interest;
 import com.team03.monew.entity.NewsArticle;
+import com.team03.monew.entity.User;
 import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.ArticleViewRepository;
+import com.team03.monew.repository.InterestRepository;
 import com.team03.monew.repository.NewsArticleRepository;
+import com.team03.monew.repository.UserRepository;
+import com.team03.monew.storage.BackupStorage;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +40,9 @@ public class NewsArticleService {
 
     private final NewsArticleRepository newsArticleRepository;
     private final ArticleViewRepository articleViewRepository;
+    private final BackupStorage backupStorage;
+    private final InterestRepository interestRepository;
+    private final UserRepository userRepository;
     private final JPAQueryFactory queryFactory;
 
     @Transactional
@@ -41,13 +53,23 @@ public class NewsArticleService {
                 return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.NEWSARTICLE);
             });
 
-        Optional<ArticleView> optional = articleViewRepository.findByArticleIdAndUserId(articleId, userId);
+        // 유저 조회
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> {
+                ErrorDetail detail = new ErrorDetail("UUID", "userId", userId.toString());
+                return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
+            });
+
+        // 중복 조회 방지
+        Optional<ArticleView> optional = articleViewRepository.findByArticleAndUser(article, user);
         if (optional.isPresent()) {
             return ArticleViewMapper.toDto(optional.get());
         }
 
-        ArticleView view = articleViewRepository.save(new ArticleView(article, userId));
+        // 조회 기록 저장 및 viewCount 증가
+        ArticleView view = articleViewRepository.save(new ArticleView(article, user));
         article.increaseViewCount();
+
         return ArticleViewMapper.toDto(view);
     }
 
@@ -112,6 +134,36 @@ public class NewsArticleService {
             });
 
         newsArticleRepository.delete(article);
+    }
+
+    // 유실된 데이터 복구
+    @Transactional
+    public List<ArticleRestoreResultDto> restore(LocalDate from, LocalDate to) {
+        List<ArticleRestoreResultDto> result = new ArrayList<>();
+
+        for (LocalDate date = from; !date.isAfter(to); date = date.plusDays(1)) {
+            List<NewsBackupDto> backups = backupStorage.loadBackup(date);
+            List<UUID> restoredIds = new ArrayList<>();
+
+            for (NewsBackupDto dto : backups) {
+                if (!newsArticleRepository.existsByOriginalLink(dto.originalLink())) {
+                    Interest interest = interestRepository.findById(dto.interestId())
+                        .orElseThrow(() -> new IllegalArgumentException("관심사 없음"));
+
+                    NewsArticle article = new NewsArticle(
+                        dto.source(), dto.originalLink(), dto.title(),
+                        dto.date(), dto.summary(), interest
+                    );
+
+                    newsArticleRepository.save(article);
+                    restoredIds.add(article.getId());
+                }
+            }
+            LocalDateTime restoreDate = date.atStartOfDay();
+            result.add(new ArticleRestoreResultDto(restoreDate, restoredIds, restoredIds.size()));
+        }
+
+        return result;
     }
 
     // 마지막 요소의 커서 인코딩
