@@ -3,14 +3,15 @@ package com.team03.monew.service;
 import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.dto.interest.InterestRegisterRequest;
-import com.team03.monew.dto.interest.InterestUpdateRequest;
 import com.team03.monew.dto.interest.mapper.InterestMapper;
 import com.team03.monew.entity.Interest;
+import com.team03.monew.entity.Subscription;
 import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.InterestRepository;
+import com.team03.monew.repository.SubscriptionRepository;
 import com.team03.monew.util.SimilarityUtil;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterestService {
 
   private final InterestRepository interestRepository;
+  private final SubscriptionRepository subscriptionRepository;
 
   public InterestDto registerInterest(InterestRegisterRequest request) {
     String newName = request.name();
@@ -77,5 +79,57 @@ public class InterestService {
       int limit
   ) {
     return Optional.of(interestRepository.searchInterests(userId, keyword, orderBy, direction, cursor, after, limit)) ;
+  }
+
+  public InterestDto subscribe(UUID interestId, UUID userId) {
+    Interest interest = interestRepository.findById(interestId)
+        .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND,
+            new ErrorDetail("Interest", "interestId", "Interest"),
+            ExceptionType.INTEREST));
+
+    if (subscriptionRepository.existsByUserIdAndInterestId(userId, interestId)) {
+      return InterestMapper.toDto(interest);// 이미 구독 중이면 그대로 반환
+    }
+
+    subscriptionRepository.save(
+        Subscription.builder()
+            .userId(userId)
+            .interest(interest)
+            .build()
+    );
+    increaseSubscriberCount(interest);
+
+    return InterestMapper.toDto(interest);
+  }
+
+  public void unsubscribe(UUID interestId, UUID userId) {
+    Interest interest = interestRepository.findById(interestId)
+        .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, new ErrorDetail(
+            "interest","interesdId","interest"
+        ), ExceptionType.INTEREST));
+
+    subscriptionRepository.findByUserIdAndInterestId(userId, interestId)
+        .ifPresent(subscription -> {
+          subscriptionRepository.delete(subscription);
+          decreaseSubscriberCount(interest);
+        });
+  }
+
+  public void delete(UUID interestId) {
+    Interest interest = interestRepository.findById(interestId)
+        .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, new ErrorDetail(
+            "interest","interesdId","interest"
+        ), ExceptionType.INTEREST));
+    interestRepository.delete(interest);
+  }
+
+  private void increaseSubscriberCount(Interest interest) {
+    interest.setSubscriberCount(interest.getSubscriberCount() + 1);
+  }
+
+  private void decreaseSubscriberCount(Interest interest) {
+    if (interest.getSubscriberCount() > 0) {
+      interest.setSubscriberCount(interest.getSubscriberCount() - 1);
+    }
   }
 }

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 // InterestRepositoryCustom.java
 public interface InterestRepositoryCustom {
-  CursorPageResponseInterestDto searchInterests(
+  public CursorPageResponseInterestDto searchInterests(
       UUID userId,
       String keyword,
       String orderBy,
