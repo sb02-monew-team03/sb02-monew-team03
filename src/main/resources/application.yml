@@ -13,3 +13,8 @@ spring:
             hibernate:
                 format_sql: true
                 dialect: org.hibernate.dialect.PostgreSQLDialect
+
+naver:
+    api:
+        client-id: ${NAVER_API_CLIENT_ID}
+        client-secret: ${NAVER_API_CLIENT_SECRET}

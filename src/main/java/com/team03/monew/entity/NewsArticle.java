@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -38,7 +37,6 @@ public class NewsArticle {
   @Column(nullable = false)
   private LocalDateTime date;
 
-  @Lob
   private String summary;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -73,19 +71,6 @@ public class NewsArticle {
   public void markAsDeleted() {
     this.deleted = true;
   }
-
-  // 복구 시 사용할 생성자
-//  public NewsArticle(String source, String originalLink, String title,
-//      LocalDateTime date, String summary, Interest interest) {
-//    this.source = source;
-//    this.originalLink = originalLink;
-//    this.title = title;
-//    this.date = date;
-//    this.summary = summary;
-//    this.interest = interest;
-//    this.viewCount = 0;
-//    this.deleted = false;
-//  }
 
   @Builder
   public NewsArticle(String source, String originalLink, String title,
