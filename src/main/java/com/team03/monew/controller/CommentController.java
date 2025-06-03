@@ -45,7 +45,7 @@ public class CommentController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
             @RequestParam(value = "limit", defaultValue = "50")
             @Min(1) @Max(100) int limit,
-            @RequestHeader("userId") UUID userId
+            @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         return commentService.commentCursorPage(articleId, orderBy, direction, cursor, after, limit, userId);
     }
@@ -58,13 +58,13 @@ public class CommentController {
     }
 
     @PostMapping("/{commentId}/comment-likes")
-    public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable UUID commentId,@RequestParam UUID userId) {
+    public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable UUID commentId,  @RequestHeader("Monew-Request-User-ID") UUID userId) {
         CommentLikeDto commentLikeDto = commentService.commentLikes(commentId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(commentLikeDto);
     }
 
     @DeleteMapping("/{commentId}/comment-likes")
-    public ResponseEntity<Void> cancelCommentLike(@PathVariable UUID commentId, @RequestParam UUID userId) {
+    public ResponseEntity<Void> cancelCommentLike(@PathVariable UUID commentId,  @RequestHeader("Monew-Request-User-ID") UUID userId) {
         commentService.cancelCommentLike(commentId, userId);
         return ResponseEntity.noContent().build();
     }
@@ -72,7 +72,7 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> softDeleteComment(
             @PathVariable UUID commentId,
-            @RequestParam UUID userId
+            @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         commentService.softDeleteComment(commentId, userId);
         return ResponseEntity.noContent().build();
@@ -81,7 +81,7 @@ public class CommentController {
     @DeleteMapping("/{commentId}/hard")
     public ResponseEntity<Void> hardDeleteComment(
             @PathVariable UUID commentId,
-            @RequestParam UUID userId
+            @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         commentService.hardDeleteComment(commentId, userId);
         return ResponseEntity.noContent().build();
@@ -90,7 +90,7 @@ public class CommentController {
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentDto> updateComment(
             @PathVariable UUID commentId,
-            @RequestParam UUID userId,
+            @RequestHeader(name = "Monew-Request-User-ID") UUID userId,
             @Valid @RequestBody CommentUpdateRequest request
     ) {
         CommentDto updated = commentService.updateComment(commentId, userId, request);
