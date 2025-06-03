@@ -12,6 +12,7 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.InterestRepository;
 import com.team03.monew.repository.SubscriptionRepository;
+import com.team03.monew.repository.UserRepository;
 import com.team03.monew.util.SimilarityUtil;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +28,7 @@ public class InterestService {
 
   private final InterestRepository interestRepository;
   private final SubscriptionRepository subscriptionRepository;
+  private final UserRepository userRepository;
 
   public InterestDto registerInterest(InterestRegisterRequest request) {
     String newName = request.name();
@@ -93,7 +95,10 @@ public class InterestService {
 
     subscriptionRepository.save(
         Subscription.builder()
-            .userId(userId)
+            .user(userRepository.findById(userId).orElseThrow((
+                )->new CustomException(ErrorCode.RESOURCE_NOT_FOUND,
+                new ErrorDetail("User", "userId", "user")
+            , ExceptionType.INTEREST)) )
             .interest(interest)
             .build()
     );
