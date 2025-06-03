@@ -1,6 +1,7 @@
 package com.team03.monew.controller;
 
 import com.team03.monew.dto.user.UserDto;
+import com.team03.monew.dto.user.UserLoginRequest;
 import com.team03.monew.dto.user.UserRegisterRequest;
 import com.team03.monew.dto.user.UserUpdateRequest;
 import com.team03.monew.service.UserService;
@@ -57,4 +58,11 @@ public class UserController {
         userService.deleteUserHard(userId, requesterId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserDto> login(@RequestBody @Valid UserLoginRequest request) {
+        UserDto userDto = userService.login(request);
+        return ResponseEntity.ok(userDto);
+    }
+
 }

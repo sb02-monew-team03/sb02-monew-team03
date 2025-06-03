@@ -1,5 +1,7 @@
-package com.team03.monew.dto.user;
+package com.team03.monew.dto.user.mapper;
 
+import com.team03.monew.dto.user.UserDto;
+import com.team03.monew.dto.user.UserRegisterRequest;
 import com.team03.monew.entity.User;
 import org.springframework.stereotype.Component;
 

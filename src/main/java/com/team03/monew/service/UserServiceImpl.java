@@ -1,7 +1,8 @@
 package com.team03.monew.service;
 
 import com.team03.monew.dto.user.UserDto;
-import com.team03.monew.dto.user.UserMapper;
+import com.team03.monew.dto.user.UserLoginRequest;
+import com.team03.monew.dto.user.mapper.UserMapper;
 import com.team03.monew.dto.user.UserRegisterRequest;
 import com.team03.monew.dto.user.UserUpdateRequest;
 import com.team03.monew.entity.User;
@@ -87,6 +88,21 @@ public class UserServiceImpl implements UserService {
 
         // 사용자 계정을 물리적으로 삭제 처리 (연관 요소 cascade 로 자동 삭제)
         userRepository.delete(user);
+    }
+
+    @Override
+    public UserDto login(UserLoginRequest request) {
+        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> {
+            ErrorDetail detail = new ErrorDetail("EMAIL", "email", request.email());
+            return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
+        });
+
+        if (!user.getPassword().equals(request.password())) {
+            ErrorDetail detail = new ErrorDetail("PASSWORD", "password", request.password());
+            throw new CustomException(ErrorCode.UNAUTHORIZED, detail, ExceptionType.USER);
+        }
+
+        return userMapper.toDto(user);
     }
 
 }
