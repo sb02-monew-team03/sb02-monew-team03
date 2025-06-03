@@ -10,4 +10,8 @@ public interface UserService {
     UserDto register(UserRegisterRequest request);
 
     UserDto updateNickname(UUID userId, UUID requesterId, UserUpdateRequest request);
+
+    void deleteUser(UUID userId, UUID requesterId);
+
+    void deleteUserHard(UUID userId, UUID requesterId);
 }

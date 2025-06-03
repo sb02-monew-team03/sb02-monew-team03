@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ public class UserController {
         return ResponseEntity.status(201).body(userDto);
     }
 
-    @PatchMapping
+    @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> updateNickname(
         @PathVariable UUID userId,
         @RequestBody @Valid UserUpdateRequest request,
@@ -37,5 +38,23 @@ public class UserController {
     ) {
         UserDto updated = userService.updateNickname(userId, requesterId, request);
         return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(
+        @PathVariable UUID userId,
+        @RequestHeader("MoNew-Request-User-ID") UUID requesterId
+    ) {
+        userService.deleteUser(userId, requesterId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{userId}/hard")
+    public ResponseEntity<Void> deleteUserHard(
+        @PathVariable UUID userId,
+        @RequestHeader("MoNew-Request-User-ID") UUID requesterId
+    ) {
+        userService.deleteUserHard(userId, requesterId);
+        return ResponseEntity.noContent().build();
     }
 }
