@@ -4,6 +4,7 @@ import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.dto.interest.InterestRegisterRequest;
 import com.team03.monew.dto.interest.InterestUpdateRequest;
+import com.team03.monew.dto.subscription.SubscriptionDto;
 import com.team03.monew.service.InterestService;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
@@ -63,7 +64,7 @@ public class InterestController {
   }
 
   @PostMapping("/{interestId}/subscriptions")
-  public ResponseEntity<InterestDto> subscribe(
+  public ResponseEntity<SubscriptionDto> subscribe(
       @PathVariable UUID interestId,
       @RequestHeader("Monew-Request-User-ID") UUID userId
   ) {
