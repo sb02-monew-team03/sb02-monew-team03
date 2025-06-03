@@ -31,15 +31,16 @@ public class ArticleView {
     @JoinColumn(name = "article_id", nullable = false)
     private NewsArticle article;
 
-    @Column(nullable = false)
-    private UUID userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public ArticleView(NewsArticle article, UUID userId) {
+    public ArticleView(NewsArticle article, User user) {
         this.article = article;
-        this.userId = userId;
+        this.user = user;
     }
 }
 

@@ -1,5 +1,6 @@
 package com.team03.monew.controller;
 
+import com.team03.monew.dto.newsArticle.response.ArticleRestoreResultDto;
 import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
 import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
 import com.team03.monew.dto.newsArticle.response.SourcesResponseDto;
@@ -8,6 +9,7 @@ import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.service.NewsArticleService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -79,6 +81,15 @@ public class NewsArticleController {
     public ResponseEntity<Void> deleteArticleHard(@PathVariable UUID articleId) {
         newsArticleService.deletePhysically(articleId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/restore")
+    public ResponseEntity<List<ArticleRestoreResultDto>> restoreArticles(
+        @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+        @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+
+        List<ArticleRestoreResultDto> results = newsArticleService.restore(from, to);
+        return ResponseEntity.ok(results);
     }
 
     private static final Set<String> VALID_ORDER_BY = Set.of("publishDate", "commentCount", "viewCount");

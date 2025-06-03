@@ -1,10 +1,11 @@
-package com.team03.monew.dto.newsArticle;
+package com.team03.monew.dto.newsArticle.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public record ArticleRestoreResultDto(
     LocalDateTime restoreDate,
-    List<String> restoredArticleIds,
+    List<UUID> restoredArticleIds,
     int restoredArticleCount
 ) {}
