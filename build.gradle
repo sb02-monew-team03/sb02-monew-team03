@@ -68,6 +68,9 @@ dependencies {
 
     //글자 유사도
     implementation 'org.apache.commons:commons-text:1.10.0'
+
+    // RSS를 파싱하기 위한 파서
+    implementation 'org.jsoup:jsoup:1.20.1'
 }
 
 tasks.named('test') {

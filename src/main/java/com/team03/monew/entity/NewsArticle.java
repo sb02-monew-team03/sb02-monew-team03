@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,6 +53,7 @@ public class NewsArticle {
   @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments = new ArrayList<>();
 
+
   // 연관관계 편의 메서드
   public void addComment(Comment comment) {
     comments.add(comment);
@@ -73,16 +75,30 @@ public class NewsArticle {
   }
 
   // 복구 시 사용할 생성자
+//  public NewsArticle(String source, String originalLink, String title,
+//      LocalDateTime date, String summary, Interest interest) {
+//    this.source = source;
+//    this.originalLink = originalLink;
+//    this.title = title;
+//    this.date = date;
+//    this.summary = summary;
+//    this.interest = interest;
+//    this.viewCount = 0;
+//    this.deleted = false;
+//  }
+
+  @Builder
   public NewsArticle(String source, String originalLink, String title,
-      LocalDateTime date, String summary, Interest interest) {
+      LocalDateTime date, String summary,
+      Interest interest, int viewCount, boolean deleted) {
     this.source = source;
     this.originalLink = originalLink;
     this.title = title;
     this.date = date;
     this.summary = summary;
     this.interest = interest;
-    this.viewCount = 0;
-    this.deleted = false;
+    this.viewCount = viewCount;
+    this.deleted = deleted;
   }
 
   // getter/setter
