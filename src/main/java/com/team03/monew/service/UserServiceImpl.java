@@ -9,6 +9,7 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
+import com.team03.monew.repository.ActivityRepository;
 import com.team03.monew.repository.UserRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ActivityRepository activityRepository;
 
     @Override
     public UserDto register(UserRegisterRequest request) {
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateNickname(UUID userId, UUID requesterId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(() -> {
+        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> {
             ErrorDetail detail = new ErrorDetail("UUID", "userId", userId.toString());
             return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
         });
@@ -51,4 +53,40 @@ public class UserServiceImpl implements UserService {
         user.updateNickname(request.nickname());
         return userMapper.toDto(user);
     }
+
+    @Override
+    public void deleteUser(UUID userId, UUID requesterId) {
+        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> {
+            ErrorDetail detail = new ErrorDetail("UUID", "userId", userId.toString());
+            return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
+        });
+
+        if (!user.getId().equals(requesterId)) {
+            ErrorDetail detail = new ErrorDetail("USER", "userId", requesterId.toString());
+            throw new CustomException(ErrorCode.FORBIDDEN, detail, ExceptionType.USER);
+        }
+
+        // 사용자 계정을 논리적으로 삭제 처리
+        user.markAsDeleted();
+    }
+
+    @Override
+    public void deleteUserHard(UUID userId, UUID requesterId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            ErrorDetail detail = new ErrorDetail("UUID", "userId", userId.toString());
+            return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
+        });
+
+        if (!user.getId().equals(requesterId)) {
+            ErrorDetail detail = new ErrorDetail("USER", "userId", requesterId.toString());
+            throw new CustomException(ErrorCode.FORBIDDEN, detail, ExceptionType.USER);
+        }
+
+        // 활동 내역은 수동 삭제 (1:1 관계이므로 cascade 작동 x)
+        activityRepository.deleteByUser(user);
+
+        // 사용자 계정을 물리적으로 삭제 처리 (연관 요소 cascade 로 자동 삭제)
+        userRepository.delete(user);
+    }
+
 }

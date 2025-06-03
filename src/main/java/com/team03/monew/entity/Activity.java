@@ -15,24 +15,25 @@ import java.util.UUID;
 @Entity
 @Table(name = "activities")
 public class Activity {
-  @Id
-  private UUID userId;
 
-  @ElementCollection
-  private List<Long> recentCommentIds = new ArrayList<>();
+    @Id
+    private UUID userId;
 
-  @ElementCollection
-  private List<Long> recentLikedCommentIds = new ArrayList<>();
+    @ElementCollection
+    private List<Long> recentCommentIds = new ArrayList<>();
 
-  @ElementCollection
-  private List<Long> recentViewedNewsIds = new ArrayList<>();
+    @ElementCollection
+    private List<Long> recentLikedCommentIds = new ArrayList<>();
 
-  @ElementCollection
-  private List<Long> subscribedInterestIds = new ArrayList<>();
+    @ElementCollection
+    private List<Long> recentViewedNewsIds = new ArrayList<>();
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @MapsId
-  private User user;
+    @ElementCollection
+    private List<Long> subscribedInterestIds = new ArrayList<>();
 
-  // getter/setter
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId // user 필드에서 참조하는 User의 ID를 이 엔티티의 PK로 사용
+    private User user;
+
+    // getter/setter
 }
