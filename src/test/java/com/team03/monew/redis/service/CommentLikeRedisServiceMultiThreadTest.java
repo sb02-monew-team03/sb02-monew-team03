@@ -20,18 +20,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class CommentLikeRedisServiceMultiThreadTest {
 
-    @Mock
+    @Autowired
     RedisService redisService;
 
-    @InjectMocks
+    @Autowired
     CommentLikeRedisService likeService;
 
-    @Mock
+    @Autowired
     private CommentServiceImpl commentService;
 
 
@@ -39,19 +40,21 @@ class CommentLikeRedisServiceMultiThreadTest {
     private final Strategy strategyV1 = Strategy.V1;
     private final Strategy strategyDB = Strategy.DB;
 
-    private static final int USER_COUNT = 100;
+    private static final int USER_COUNT = 5;
     private static final int COMMENT_COUNT = 3;
     private static final int TOTAL_REQUESTS = USER_COUNT * COMMENT_COUNT;
+    private static final String PREFIX_LIKE_COUNT_V1 = "comment:like-count:v1:";
+    private static final String PREFIX_LIKE_COUNT_V2 = "comment:like-count:v2:";
+
+    @Test
+    void V1_100명_10댓글_좋아요_성능측정() throws InterruptedException {
+        runConcurrentLikeTest(strategyV1);
+    }
 
 //    @Test
-//    void V1_100명_10댓글_좋아요_성능측정() throws InterruptedException {
-//        runConcurrentLikeTest(strategyV1);
+//    void V2_100명_10댓글_좋아요_성능측정() throws InterruptedException {
+//        runConcurrentLikeTest(strategyV2);
 //    }
-//
-    @Test
-    void V2_100명_10댓글_좋아요_성능측정() throws InterruptedException {
-        runConcurrentLikeTest(strategyV2);
-    }
 //
 //    @Test
 //    void DB_100명_10개_댓글_좋아요_성능측정() throws InterruptedException {
@@ -85,9 +88,10 @@ class CommentLikeRedisServiceMultiThreadTest {
                                     if (logThis) {
                                         System.out.printf("[V1] user: %d → comment: %d%n", userId, commentId);
                                     }
-                                    likeService.increaseLikeCountV1(commentId);
-                                    System.out.println("이게 실행이 안되는데 맞을까?");
-                                    System.out.println(likeService.getLikeCount(commentId, strategyV1));
+                                    likeService.likeCommentV1(commentId, userId);
+                                    String userKey = "comment:like:v:" + commentId + ":" + userId;
+                                    Object userValue = redisService.get(userKey);
+                                    System.out.println("유저 좋아요 여부 key = " + userKey + ", value = " + userValue);
                                 } catch (Exception e) {
                                     System.err.printf(" [V1 예외] user: %d, comment: %d -> %s%n", userId, commentId,
                                             e.getMessage());
@@ -99,9 +103,10 @@ class CommentLikeRedisServiceMultiThreadTest {
                                     if (logThis) {
                                         System.out.printf("[V2] user: %d → comment: %d%n", userId, commentId);
                                     }
-                                    likeService.increaseLikeCountV2(commentId);
-                                    System.out.println("이게 실행이 안되는데 맞을까?");
-                                    System.out.println(likeService.getLikeCount(commentId, strategyV2));
+                                    likeService.likeCommentV2(commentId, userId);
+                                    String userKey = "comment:like:v:" + commentId + ":" + userId;
+                                    Object userValue = redisService.get(userKey);
+                                    System.out.println("유저 좋아요 여부 key = " + userKey + ", value = " + userValue);
                                 } catch (Exception e) {
                                     System.err.printf(" [V2 예외] user: %d, comment: %d -> %s%n", userId, commentId,
                                             e.getMessage());
