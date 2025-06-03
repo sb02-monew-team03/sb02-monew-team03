@@ -1,14 +1,15 @@
 package com.team03.monew.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.UUID;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 @Entity
 @Table(name = "users")
@@ -17,8 +18,8 @@ import lombok.NoArgsConstructor;
 public class User extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -32,7 +33,9 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public User(String email, String nickname, String password) {
+    @Builder
+    public User(Long id, String email, String nickname, String password) {
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;

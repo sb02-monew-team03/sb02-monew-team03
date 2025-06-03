@@ -11,7 +11,6 @@ import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.ArticleViewRepository;
 import com.team03.monew.repository.NewsArticleRepository;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +21,10 @@ public class NewsArticleService {
     private final NewsArticleRepository newsRepository;
     private final ArticleViewRepository articleViewRepository;
 
-    public ArticleViewDto saveArticleView(UUID articleId, UUID userId) {
+    public ArticleViewDto saveArticleView(Long articleId, Long userId) {
         NewsArticle article = newsRepository.findByIdAndDeletedFalse(articleId)
             .orElseThrow(() ->{
-                ErrorDetail detail = new ErrorDetail("UUID", "articleId", articleId.toString());
+                ErrorDetail detail = new ErrorDetail("Long", "articleId", articleId.toString());
                 return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.NEWSARTICLE);
             });
 

@@ -13,27 +13,27 @@ public class CommentLikeRedisController {
 
     private final CommentLikeRedisService commentLikeRedisService;
 
-    @GetMapping("/{commentId}/like-count")
-    public ResponseEntity<Integer> getLikeCount(@PathVariable Long commentId) {
-        int likeCount = commentLikeRedisService.getLikeCount(commentId);
-        return ResponseEntity.ok(likeCount);
-    }
-
-    @PostMapping("/{commentId}/like")
-    public ResponseEntity<Void> increaseLike(@PathVariable Long commentId) {
-        commentLikeRedisService.increaseLikeCountV1(commentId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{commentId}/like")
-    public ResponseEntity<Void> decreaseLike(@PathVariable Long commentId) {
-        commentLikeRedisService.decreaseLikeCountV1(commentId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{commentId}/like-cache")
-    public ResponseEntity<Void> deleteCache(@PathVariable Long commentId) {
-        commentLikeRedisService.deleteLikeCount(commentId);
-        return ResponseEntity.noContent().build();
-    }
+//    @GetMapping("/{commentId}/like-count")
+//    public ResponseEntity<Integer> getLikeCount(@PathVariable Long commentId) {
+//        int likeCount = commentLikeRedisService.getLikeCount(commentId);
+//        return ResponseEntity.ok(likeCount);
+//    }
+//
+//    @PostMapping("/{commentId}/like")
+//    public ResponseEntity<Void> increaseLike(@PathVariable Long commentId) {
+//        commentLikeRedisService.increaseLikeCountV1(commentId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @DeleteMapping("/{commentId}/like")
+//    public ResponseEntity<Void> decreaseLike(@PathVariable Long commentId) {
+//        commentLikeRedisService.decreaseLikeCountV1(commentId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @DeleteMapping("/{commentId}/like-cache")
+//    public ResponseEntity<Void> deleteCache(@PathVariable Long commentId) {
+//        commentLikeRedisService.deleteLikeCount(commentId);
+//        return ResponseEntity.noContent().build();
+//    }
 }

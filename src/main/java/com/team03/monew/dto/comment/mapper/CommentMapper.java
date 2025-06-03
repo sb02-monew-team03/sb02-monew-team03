@@ -4,7 +4,6 @@ import com.team03.monew.dto.comment.response.CommentDto;
 import com.team03.monew.entity.Comment;
 import com.team03.monew.entity.NewsArticle;
 import com.team03.monew.entity.User;
-import java.util.UUID;
 
 public class CommentMapper {
 

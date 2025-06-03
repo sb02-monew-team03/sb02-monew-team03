@@ -10,13 +10,12 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "activities")
 public class Activity {
   @Id
-  private UUID userId;
+  private Long userId;
 
   @ElementCollection
   private List<Long> recentCommentIds = new ArrayList<>();

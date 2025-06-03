@@ -1,15 +1,14 @@
 package com.team03.monew.dto.comment.response;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record CommentLikeDto(
-        UUID id,
-        UUID likedBy,
+        Long id,
+        Long likedBy,
         LocalDateTime createdBy,
-        UUID commentId,
-        UUID articleId,
-        UUID commentUserId,
+        Long commentId,
+        Long articleId,
+        Long commentUserId,
         String commentUserNickName,
         String commentContent,
         Integer commentLikeCount,

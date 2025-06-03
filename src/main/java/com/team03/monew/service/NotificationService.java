@@ -6,7 +6,6 @@ import com.team03.monew.entity.Notification;
 import com.team03.monew.repository.NotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
   private final NotificationRepository notificationRepository;
 
-  public CursorPageResponseNotificationDto getNotifications(UUID userId, UUID cursor, LocalDateTime after, int limit) {
+  public CursorPageResponseNotificationDto getNotifications(Long userId, Long cursor, LocalDateTime after, int limit) {
     Pageable pageable = PageRequest.of(0, limit);
     List<Notification> notifications = notificationRepository.findByCursorAndAfter(userId, cursor, after, pageable);
 

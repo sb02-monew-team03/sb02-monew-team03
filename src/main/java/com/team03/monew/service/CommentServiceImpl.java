@@ -16,13 +16,12 @@ import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
-import com.team03.monew.repository.CommentRepositoryCustom;
+import com.team03.monew.repository.CommentRepository;
+import com.team03.monew.repository.NewsArticleRepository;
+import com.team03.monew.repository.UserRepository;
 import com.team03.monew.util.OrderBy;
 import com.team03.monew.util.SortDirection;
-import com.team03.monew.util.EntityFinder;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,65 +30,55 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepositoryCustom commentRepository;
+    private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
-    private final EntityFinder entityFinder;
+    private final UserRepository userRepository;
+    private final NewsArticleRepository newsArticleRepository;
 
-    @Transactional(readOnly = true)
-    public CursorPageResponseCommentDto<CommentDto> commentCursorPage(
-            UUID articleId,
-            OrderBy orderBy,
-            SortDirection direction,
-            UUID cursor,
-            LocalDateTime after,
-            int limit,
-            UUID requesterId
-    ) {
-        entityFinder.getUserOrThrow(requesterId);
-        entityFinder.getNewsArticleOrThrow(articleId);
 
-        List<Comment> comments = commentRepository.findByArticleWithCursorPaging(
-                articleId, orderBy, direction, cursor, after, limit, requesterId
-        );
-
-        List<CommentDto> commentDtoList = comments.stream()
-                .map(CommentMapper::toCommentDto)
-                .toList();
-
-        boolean hasNext = comments.size() == limit;
-        LocalDateTime nextAfter = null;
-        UUID nextCursor = null;
-        if (hasNext) {
-            Comment last = comments.get(comments.size() - 1);
-            nextCursor = last.getId();
-            nextAfter = last.getCreatedAt();
-        }
-
-        return CursorPageResponseCommentDto.<CommentDto>builder()
-                .content(commentDtoList)
-                .nextCursor(nextCursor != null ? nextCursor.toString() : null)
-                .nextAfter(nextAfter)
-                .size(limit)
-                .totalElements(comments.size())
-                .hasNext(hasNext)
-                .build();
+    @Override
+    public CursorPageResponseCommentDto<CommentDto> commentCursorPage(Long articleId, OrderBy orderBy,
+                                                                      SortDirection direction, Long cursor,
+                                                                      LocalDateTime after, int limit,
+                                                                      Long requesterId) {
+        return null;
     }
 
     @Override
     @Transactional
-    public CommentDto registerComment(CommentRegisterRequest request) {
-        User user = entityFinder.getUserOrThrow(request.userId());
-        NewsArticle article = entityFinder.getNewsArticleOrThrow(request.articleId());
+    public CommentDto registerComment(CommentRegisterRequest commentRegisterRequest) {
+        User user = userRepository.findById(commentRegisterRequest.userId())
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("Long", "userId", ExceptionType.USER.toString()),
+                        ExceptionType.USER
+                ));
 
-        Comment comment = CommentMapper.toComment(request.comment(), article, user);
+        NewsArticle newsArticle = newsArticleRepository.findById(commentRegisterRequest.articleId())
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("Long", "articleId", ExceptionType.NEWSARTICLE.toString()),
+                        ExceptionType.NEWSARTICLE
+                ));
+        Comment comment = CommentMapper.toComment(commentRegisterRequest.comment(), newsArticle, user);
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
     @Override
     @Transactional
-    public CommentLikeDto commentLikes(UUID commentId, UUID userId) {
-        User user = entityFinder.getUserOrThrow(userId);
-        Comment comment = entityFinder.getCommentOrThrow(commentId);
+    public CommentLikeDto commentLikes(Long commentId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("Long", "userId", ExceptionType.USER.toString()),
+                        ExceptionType.USER
+                ));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("Long", "commentId", ExceptionType.COMMENT.toString()),
+                        ExceptionType.COMMENT
+                ));
 
         if (commentLikeRepository.existsByCommentAndUser(comment, user)) {
             throw new CustomException(
@@ -100,17 +89,30 @@ public class CommentServiceImpl implements CommentService {
         }
 
         CommentLike commentLike = CommentLikesMapper.toCommentLike(comment, user);
-        comment.addCommentLike(commentLike);  // 연관관계 메서드
-        comment.increaseLikeCount();
 
-        return CommentLikesMapper.toCommentLikeDto(commentLikeRepository.save(commentLike));
+        comment.addCommentLike(commentLike); // 연관관계 편의 메서드
+        // 좋아요 수 증가
+        comment.increaseLikeCount();
+        CommentLike save = commentLikeRepository.save(commentLike);
+        return CommentLikesMapper.toCommentLikeDto(save);
     }
 
     @Override
     @Transactional
-    public void cancelCommentLike(UUID commentId, UUID userId) {
-        User user = entityFinder.getUserOrThrow(userId);
-        Comment comment = entityFinder.getCommentOrThrow(commentId);
+    public void cancelCommentLike(Long commentId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("Long", "userId", userId.toString()),
+                        ExceptionType.USER
+                ));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.RESOURCE_NOT_FOUND,
+                        new ErrorDetail("Long", "commentId", commentId.toString()),
+                        ExceptionType.COMMENT
+                ));
 
         CommentLike commentLike = commentLikeRepository.findByCommentAndUser(comment, user)
                 .orElseThrow(() -> new CustomException(
@@ -119,65 +121,33 @@ public class CommentServiceImpl implements CommentService {
                         ExceptionType.COMMENT
                 ));
 
-        comment.removeCommentLike(commentLike);
+        // 좋아요 취소 처리
+        comment.removeCommentLike(commentLike); // 연관관계 정리
         comment.decreaseLikeCount();
         commentLikeRepository.delete(commentLike);
     }
 
     @Override
-    @Transactional
-    public void softDeleteComment(UUID commentId, UUID userId) {
-        Comment comment = entityFinder.getCommentOrThrow(commentId);
+    public void softDeleteComment(Long commentId, Long userId) {
 
-        if (!comment.getUser().getId().equals(userId)) {
-            throw new CustomException(
-                    ErrorCode.FORBIDDEN,
-                    new ErrorDetail("UUID", "userId", userId.toString()),
-                    ExceptionType.USER
-            );
-        }
-
-        comment.markAsDeleted();
     }
 
     @Override
-    @Transactional
-    public void hardDeleteComment(UUID commentId, UUID userId) {
-        Comment comment = entityFinder.getCommentOrThrow(commentId);
+    public void hardDeleteComment(Long commentId, Long userId) {
 
-        if (!comment.getUser().getId().equals(userId)) {
-            throw new CustomException(
-                    ErrorCode.FORBIDDEN,
-                    new ErrorDetail("UUID", "userId", userId.toString()),
-                    ExceptionType.USER
-            );
-        }
-
-        commentRepository.delete(comment);
     }
 
     @Override
-    @Transactional
-    public CommentDto updateComment(UUID commentId, UUID userId, CommentUpdateRequest request) {
-        Comment comment = entityFinder.getCommentOrThrow(commentId);
+    public CommentDto updateComment(Long commentId, Long userId, CommentUpdateRequest commentUpdateRequest) {
+        return null;
+    }
 
-        if (!comment.getUser().getId().equals(userId)) {
-            throw new CustomException(
-                    ErrorCode.FORBIDDEN,
-                    new ErrorDetail("UUID", "userId", userId.toString()),
-                    ExceptionType.USER
-            );
+    public int getLikeCount(long commentId) {
+        Integer likeCountById = commentRepository.findLikeCountById(commentId);
+        if (likeCountById == null){
+            return 0;
+        }else{
+            return likeCountById;
         }
-
-        if (comment.isDeleted()) {
-            throw new CustomException(
-                    ErrorCode.INVALID_INPUT_VALUE,
-                    new ErrorDetail("Boolean", "deleted", "true"),
-                    ExceptionType.COMMENT
-            );
-        }
-
-        comment.updateContent(request.content());
-        return CommentMapper.toCommentDto(comment);
     }
 }

@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -37,15 +36,15 @@ public class CommentController {
 
     @GetMapping()
     public CursorPageResponseCommentDto<CommentDto> getCommentsWithCursorPaging(
-            @RequestParam("articleId") UUID articleId,
+            @RequestParam("articleId") Long articleId,
             @RequestParam("orderBy") OrderBy orderBy,
             @RequestParam("direction") SortDirection direction,
-            @RequestParam(value = "cursor", required = false) UUID cursor,
+            @RequestParam(value = "cursor", required = false) Long cursor,
             @RequestParam(value = "after", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
             @RequestParam(value = "limit", defaultValue = "50")
             @Min(1) @Max(100) int limit,
-            @RequestHeader("userId") UUID userId
+            @RequestHeader("userId") Long userId
     ) {
         return commentService.commentCursorPage(articleId, orderBy, direction, cursor, after, limit, userId);
     }
@@ -58,21 +57,21 @@ public class CommentController {
     }
 
     @PostMapping("/{commentId}/comment-likes")
-    public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable UUID commentId,@RequestParam UUID userId) {
+    public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable Long commentId,@RequestParam Long userId) {
         CommentLikeDto commentLikeDto = commentService.commentLikes(commentId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(commentLikeDto);
     }
 
     @DeleteMapping("/{commentId}/comment-likes")
-    public ResponseEntity<Void> cancelCommentLike(@PathVariable UUID commentId, @RequestParam UUID userId) {
+    public ResponseEntity<Void> cancelCommentLike(@PathVariable Long commentId, @RequestParam Long userId) {
         commentService.cancelCommentLike(commentId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> softDeleteComment(
-            @PathVariable UUID commentId,
-            @RequestParam UUID userId
+            @PathVariable Long commentId,
+            @RequestParam Long userId
     ) {
         commentService.softDeleteComment(commentId, userId);
         return ResponseEntity.noContent().build();
@@ -80,8 +79,8 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}/hard")
     public ResponseEntity<Void> hardDeleteComment(
-            @PathVariable UUID commentId,
-            @RequestParam UUID userId
+            @PathVariable Long commentId,
+            @RequestParam Long userId
     ) {
         commentService.hardDeleteComment(commentId, userId);
         return ResponseEntity.noContent().build();
@@ -89,8 +88,8 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentDto> updateComment(
-            @PathVariable UUID commentId,
-            @RequestParam UUID userId,
+            @PathVariable Long commentId,
+            @RequestParam Long userId,
             @Valid @RequestBody CommentUpdateRequest request
     ) {
         CommentDto updated = commentService.updateComment(commentId, userId, request);

@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     public User toUser(UserRegisterRequest request) {
-        return new User(
-            request.email(),
-            request.nickname(),
-            request.password()
-        );
+        return User.builder()
+                .email(request.email())
+                .nickname(request.nickname())
+                .password(request.password())
+                .build();
     }
 
     public UserDto toDto(User user) {

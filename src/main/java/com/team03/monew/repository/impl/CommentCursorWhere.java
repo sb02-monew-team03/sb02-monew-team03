@@ -5,16 +5,16 @@ import com.team03.monew.entity.QComment;
 import com.team03.monew.util.SortDirection;
 import com.team03.monew.util.OrderBy;
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 public class CommentCursorWhere {
 
-    private final UUID articleId;
+    private final Long articleId;
     private final OrderBy orderBy;
     private final SortDirection sortDirection;
     private final LocalDateTime after;
 
-    public  CommentCursorWhere(UUID articleId, OrderBy orderBy, SortDirection sortDirection, LocalDateTime after) {
+    public  CommentCursorWhere(Long articleId, OrderBy orderBy, SortDirection sortDirection, LocalDateTime after) {
         this.articleId = articleId;
         this.orderBy = orderBy;
         this.sortDirection = sortDirection;

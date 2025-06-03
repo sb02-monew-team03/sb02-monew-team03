@@ -2,12 +2,11 @@ package com.team03.monew.repository.custom;
 
 import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 // InterestRepositoryCustom.java
 public interface InterestRepositoryCustom {
   CursorPageResponseInterestDto searchInterests(
-      UUID userId,
+      Long userId,
       String keyword,
       String orderBy,
       String direction,

@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.Getter;
 
 @Entity
@@ -18,7 +17,7 @@ import lombok.Getter;
 @Getter
 public class Notification {
   @Id @GeneratedValue
-  private UUID id;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
@@ -31,7 +30,7 @@ public class Notification {
   private ResourceType relatedType;
 
   @Column(nullable = false)
-  private UUID relatedId;
+  private Long relatedId;
 
   @Column(nullable = false)
   private boolean checked = false;

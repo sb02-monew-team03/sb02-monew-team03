@@ -8,31 +8,30 @@ import com.team03.monew.dto.comment.response.CursorPageResponseCommentDto;
 import com.team03.monew.util.OrderBy;
 import com.team03.monew.util.SortDirection;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public interface CommentService {
 
     CursorPageResponseCommentDto<CommentDto> commentCursorPage(
-            UUID articleId,
+            Long articleId,
             OrderBy orderBy,
             SortDirection direction,
-            UUID cursor,
+            Long cursor,
             LocalDateTime after,
             int limit,
-            UUID requesterId
+            Long requesterId
     );
 
     CommentDto registerComment(CommentRegisterRequest commentRegisterRequest);
 
-    CommentLikeDto commentLikes(UUID commentId, UUID userId);
+    CommentLikeDto commentLikes(Long commentId, Long userId);
 
-    void cancelCommentLike(UUID commentId, UUID userId);
+    void cancelCommentLike(Long commentId, Long userId);
 
-    void softDeleteComment(UUID commentId, UUID userId);
+    void softDeleteComment(Long commentId, Long userId);
 
-    void hardDeleteComment(UUID commentId, UUID userId);
+    void hardDeleteComment(Long commentId, Long userId);
 
-    CommentDto updateComment(UUID commentId, UUID userId, CommentUpdateRequest commentUpdateRequest);
+    CommentDto updateComment(Long commentId, Long userId, CommentUpdateRequest commentUpdateRequest);
 
 
 

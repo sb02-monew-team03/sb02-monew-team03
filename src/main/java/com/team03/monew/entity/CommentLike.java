@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class CommentLike extends BaseTimeEntity {
 
     @Id
-    private UUID id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment comment;
@@ -37,6 +36,5 @@ public class CommentLike extends BaseTimeEntity {
     public void setComment(Comment comment) {
         this.comment = comment;
     }
-
 
 }

@@ -2,17 +2,17 @@ package com.team03.monew.dto.notification;
 
 import com.team03.monew.entity.Notification;
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 public record NotificationDto(
-    UUID id,
+    Long id,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     boolean confirmed,
-    UUID userId,
+    Long userId,
     String content,
     String resourceType,
-    UUID resourceId
+    Long resourceId
 ) {
   public static NotificationDto from(Notification notification) {
     return new NotificationDto(

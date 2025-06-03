@@ -10,7 +10,6 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,19 +24,19 @@ public class ArticleView {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id", nullable = false)
     private NewsArticle article;
 
     @Column(nullable = false)
-    private UUID userId;
+    private Long userId;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public ArticleView(NewsArticle article, UUID userId) {
+    public ArticleView(NewsArticle article, Long userId) {
         this.article = article;
         this.userId = userId;
     }

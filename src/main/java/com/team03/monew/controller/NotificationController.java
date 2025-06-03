@@ -3,7 +3,6 @@ package com.team03.monew.controller;
 import com.team03.monew.dto.notification.CursorPageResponseNotificationDto;
 import com.team03.monew.service.NotificationService;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,8 @@ public class NotificationController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponseNotificationDto> getNotifications(
-      @RequestHeader("Monew-Request-User-ID") UUID userId,
-      @RequestParam(required = false) UUID cursor,
+      @RequestHeader("Monew-Request-User-ID") Long userId,
+      @RequestParam(required = false) Long cursor,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
       @RequestParam(defaultValue = "50") int limit
   ) {

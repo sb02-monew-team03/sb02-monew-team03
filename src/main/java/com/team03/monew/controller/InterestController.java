@@ -7,7 +7,6 @@ import com.team03.monew.dto.interest.InterestUpdateRequest;
 import com.team03.monew.service.InterestService;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class InterestController {
 
   @PatchMapping("/{id}/keywords")
   public ResponseEntity<Void> updateInterestKeywords(
-      @PathVariable UUID id,
+      @PathVariable Long id,
       @RequestBody @Valid InterestUpdateRequest request
   ) {
     interestService.updateKeywords(id, request.keywords());
@@ -47,7 +46,7 @@ public class InterestController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponseInterestDto> searchInterests(
-      @RequestHeader("Monew-Request-User-ID") UUID userId,
+      @RequestHeader("Monew-Request-User-ID") Long userId,
       @RequestParam(required = false) String keyword,
       @RequestParam String orderBy,
       @RequestParam String direction,

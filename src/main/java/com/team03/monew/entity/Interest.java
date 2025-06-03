@@ -9,12 +9,11 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+
 
 @Entity
 @Table(name = "interests")
@@ -24,7 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 @AllArgsConstructor
 public class Interest {
   @Id @GeneratedValue
-  private UUID id;
+  private Long id;
 
   @Column(nullable = false, unique = true)
   private String name;

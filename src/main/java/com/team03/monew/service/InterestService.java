@@ -3,7 +3,6 @@ package com.team03.monew.service;
 import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.dto.interest.InterestRegisterRequest;
-import com.team03.monew.dto.interest.InterestUpdateRequest;
 import com.team03.monew.dto.interest.mapper.InterestMapper;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.exception.CustomException;
@@ -15,7 +14,6 @@ import com.team03.monew.util.SimilarityUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +53,7 @@ public class InterestService {
   }
 
   @Transactional
-  public void updateKeywords(UUID interestId, List<String> newKeywords) {
+  public void updateKeywords(Long interestId, List<String> newKeywords) {
     Interest interest = interestRepository.findById(interestId)
         .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, new ErrorDetail(
             "interest","interesdId","interest"
@@ -68,7 +66,7 @@ public class InterestService {
     interestRepository.save(interest); // 선택적
   }
   public Optional<CursorPageResponseInterestDto>  searchInterests(
-      UUID userId,
+      Long userId,
       String keyword,
       String orderBy,
       String direction,

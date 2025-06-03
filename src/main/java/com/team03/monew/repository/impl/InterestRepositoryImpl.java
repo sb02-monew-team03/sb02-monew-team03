@@ -15,7 +15,6 @@ import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.custom.InterestRepositoryCustom;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +26,7 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
   private final JPAQueryFactory queryFactory;
 
   @Override
-  public CursorPageResponseInterestDto searchInterests(UUID userId, String keyword, String orderBy, String direction,
+  public CursorPageResponseInterestDto searchInterests(Long userId, String keyword, String orderBy, String direction,
       String cursor, LocalDateTime after, int limit) {
     QInterest interest = QInterest.interest;
 

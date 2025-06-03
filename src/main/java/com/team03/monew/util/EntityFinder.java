@@ -7,10 +7,9 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
-import com.team03.monew.repository.CommentRepositoryCustom;
+import com.team03.monew.repository.CommentRepository;
 import com.team03.monew.repository.NewsArticleRepository;
 import com.team03.monew.repository.UserRepository;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,31 +19,31 @@ public class EntityFinder {
 
     private final UserRepository userRepository;
     private final NewsArticleRepository newsArticleRepository;
-    private final CommentRepositoryCustom commentRepository;
+    private final CommentRepository commentRepository;
 
-    public User getUserOrThrow(UUID userId) {
+    public User getUserOrThrow(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(
                         ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "userId", userId.toString()),
+                        new ErrorDetail("Long", "userId", userId.toString()),
                         ExceptionType.USER
                 ));
     }
 
-    public NewsArticle getNewsArticleOrThrow(UUID articleId) {
+    public NewsArticle getNewsArticleOrThrow(Long articleId) {
         return newsArticleRepository.findById(articleId)
                 .orElseThrow(() -> new CustomException(
                         ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "articleId", articleId.toString()),
+                        new ErrorDetail("Long", "articleId", articleId.toString()),
                         ExceptionType.NEWSARTICLE
                 ));
     }
 
-    public Comment getCommentOrThrow(UUID commentId) {
+    public Comment getCommentOrThrow(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(
                         ErrorCode.RESOURCE_NOT_FOUND,
-                        new ErrorDetail("UUID", "commentId", commentId.toString()),
+                        new ErrorDetail("Long", "commentId", commentId.toString()),
                         ExceptionType.COMMENT
                 ));
     }
