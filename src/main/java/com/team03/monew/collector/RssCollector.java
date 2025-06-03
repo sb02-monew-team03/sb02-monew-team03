@@ -8,11 +8,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +24,18 @@ public class RssCollector {
 
     private static final String RSS_URL = "https://www.hankyung.com/feed/all-news";
 
-    public void collect() {
+    private static final Map<String, String> RSS_SOURCES = Map.of(
+        "https://www.hankyung.com/feed/all-news", "한국경제",
+        "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml", "조선일보",
+        "https://www.yonhapnewstv.co.kr/browse/feed/", "연합뉴스TV"
+    );
+
+    public void collectAll() {
+        RSS_SOURCES.forEach(this::collectFromUrl);
+    }
+
+
+    private void collectFromUrl(String rssUrl, String source) {
         try {
             Document doc = Jsoup.connect(RSS_URL).get();
             Elements items = doc.select("item");
@@ -32,9 +44,9 @@ public class RssCollector {
                 String title = item.selectFirst("title").text();
                 String link = item.selectFirst("link").text();
                 String pubDate = item.selectFirst("pubDate").text();
+                String summary = item.selectFirst("description") != null ? item.selectFirst("description").text() : "";
 
-//                System.out.println("▶ RSS 기사: " + title + " / " + link + " / " + pubDate);
-                String summary = ""; // 한국경제 RSS는 <description> 없음
+                System.out.println("▶ RSS 기사: " + title + " / " + link + " / " + pubDate);
 
                 LocalDateTime date = parseRfc822(pubDate);
 
@@ -43,7 +55,7 @@ public class RssCollector {
                     link,
                     summary,
                     date,
-                    "한국경제"
+                    source
                 );
 
                 if (newsArticleService.containsKeyword(title, summary)) {
