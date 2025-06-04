@@ -28,7 +28,7 @@ public class NewsArticle {
   @Column(nullable = false)
   private String source;
 
-  @Column(nullable = false, unique = true)
+  @Column(columnDefinition = "text", nullable = false, unique = true)
   private String originalLink;
 
   @Column(nullable = false)
@@ -73,9 +73,10 @@ public class NewsArticle {
   }
 
   @Builder
-  public NewsArticle(String source, String originalLink, String title,
+  public NewsArticle(UUID id, String source, String originalLink, String title,
       LocalDateTime date, String summary,
       Interest interest, int viewCount, boolean deleted) {
+    this.id = id;
     this.source = source;
     this.originalLink = originalLink;
     this.title = title;
