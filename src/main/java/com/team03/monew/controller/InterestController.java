@@ -68,7 +68,7 @@ public class InterestController {
       @PathVariable UUID interestId,
       @RequestHeader("Monew-Request-User-ID") UUID userId
   ) {
-    InterestDto dto = interestService.subscribe(interestId, userId);
+    SubscriptionDto dto = interestService.subscribe(interestId, userId);
     return ResponseEntity.ok(dto);
   }
 
