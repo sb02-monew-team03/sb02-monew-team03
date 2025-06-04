@@ -5,6 +5,10 @@ spring:
         url: jdbc:postgresql://localhost:5432/your_db
         username: your_user
         password: your_password
+    task:
+        scheduling:
+            pool:
+                size: 1
 
     jpa:
         hibernate:
@@ -18,3 +22,10 @@ naver:
     api:
         client-id: ${NAVER_API_CLIENT_ID}
         client-secret: ${NAVER_API_CLIENT_SECRET}
+
+aws:
+    s3:
+        access-key: ${AWS_S3_ACCESS_KEY}
+        secret-key: ${AWS_S3_SECRET_KEY}
+        region: ap-northeast-2
+        bucket: news-articles-test-bucket
