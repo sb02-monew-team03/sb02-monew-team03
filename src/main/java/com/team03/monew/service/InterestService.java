@@ -4,6 +4,8 @@ import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.dto.interest.InterestRegisterRequest;
 import com.team03.monew.dto.interest.mapper.InterestMapper;
+import com.team03.monew.dto.subscription.SubscriptionDto;
+import com.team03.monew.dto.subscription.mapper.SubsciptionMapper;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.entity.Subscription;
 import com.team03.monew.exception.CustomException;
@@ -83,17 +85,20 @@ public class InterestService {
     return Optional.of(interestRepository.searchInterests(userId, keyword, orderBy, direction, cursor, after, limit)) ;
   }
 
-  public InterestDto subscribe(UUID interestId, UUID userId) {
+  public SubscriptionDto subscribe(UUID interestId, UUID userId) {
     Interest interest = interestRepository.findById(interestId)
         .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND,
             new ErrorDetail("Interest", "interestId", "Interest"),
             ExceptionType.INTEREST));
 
     if (subscriptionRepository.existsByUserIdAndInterestId(userId, interestId)) {
-      return InterestMapper.toDto(interest);// 이미 구독 중이면 그대로 반환
+      Subscription subscrip =  subscriptionRepository.findByUserIdAndInterestId(userId, interestId).orElseThrow();
+
+
+      return SubsciptionMapper.from(subscrip);// 이미 구독 중이면 그대로 반환
     }
 
-    subscriptionRepository.save(
+    Subscription subscription =  subscriptionRepository.save(
         Subscription.builder()
             .user(userRepository.findById(userId).orElseThrow((
                 )->new CustomException(ErrorCode.RESOURCE_NOT_FOUND,
@@ -104,7 +109,8 @@ public class InterestService {
     );
     increaseSubscriberCount(interest);
 
-    return InterestMapper.toDto(interest);
+    SubscriptionDto subscriptionDto = SubsciptionMapper.from(subscription);
+    return subscriptionDto;
   }
 
   public void unsubscribe(UUID interestId, UUID userId) {
