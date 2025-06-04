@@ -3,6 +3,7 @@ package com.team03.monew.service;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.monew.dto.newsArticle.mapper.ArticleViewMapper;
 import com.team03.monew.dto.newsArticle.mapper.NewsArticleMapper;
+import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
 import com.team03.monew.dto.newsArticle.response.ArticleDto;
 import com.team03.monew.dto.newsArticle.response.ArticleRestoreResultDto;
 import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
@@ -151,10 +152,16 @@ public class NewsArticleService {
                     Interest interest = interestRepository.findById(dto.interestId())
                         .orElseThrow(() -> new IllegalArgumentException("관심사 없음"));
 
-                    NewsArticle article = new NewsArticle(
-                        dto.source(), dto.originalLink(), dto.title(),
-                        dto.date(), dto.summary(), interest
-                    );
+                    NewsArticle article = NewsArticle.builder()
+                        .source(dto.source())
+                        .title(dto.title())
+                        .originalLink(dto.originalLink())
+                        .date(dto.date())
+                        .summary(dto.summary())
+                        .interest(interest)
+                        .viewCount(0)
+                        .deleted(false)
+                        .build();
 
                     newsArticleRepository.save(article);
                     restoredIds.add(article.getId());
@@ -165,6 +172,20 @@ public class NewsArticleService {
         }
 
         return result;
+    }
+
+    // 기사가 키워드를 포함하고 있는지 확인
+    public boolean containsKeyword(String title, String desc) {
+        List<String> keywords = interestRepository.findAllKeywords(); // "AI", "정치", "게임" 등
+        return keywords.stream().anyMatch(k -> title.contains(k) || desc.contains(k));
+    }
+
+    // 뉴스 기사 저장(중복 방지)
+    public void saveIfNotExists(NewsArticleRequestDto dto) {
+        boolean exists = newsArticleRepository.existsByOriginalLink(dto.originalLink());
+        if (!exists) {
+            newsArticleRepository.save(dto.toEntity());
+        }
     }
 
     // 마지막 요소의 커서 인코딩
