@@ -10,6 +10,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,25 +46,26 @@ public class RssCollector {
                 String title = item.selectFirst("title").text();
                 String link = item.selectFirst("link").text();
                 String pubDate = item.selectFirst("pubDate").text();
-//                String summary = item.selectFirst("description") != null ? item.selectFirst("description").text() : "";
                 Element descriptionEl = item.selectFirst("description");
                 String rawSummary = descriptionEl != null ? descriptionEl.text() : "";
                 String summary = cleanSummary(rawSummary);
 
                 System.out.println("제목: " + title);
                 System.out.println("요약: " + summary);
-//                System.out.println("▶ RSS 기사: " + title + " / " + link + " / " + pubDate);
                 LocalDateTime date = parseRfc822(pubDate);
 
-                NewsArticleRequestDto dto = new NewsArticleRequestDto(
-                    title,
-                    link,
-                    summary,
-                    date,
-                    source
-                );
+                Optional<UUID> matchedId = newsArticleService.findMatchingInterestId(title, summary);
 
-                if (newsArticleService.containsKeyword(title, summary)) {
+                if (matchedId.isPresent()) {
+                    NewsArticleRequestDto dto = new NewsArticleRequestDto(
+                        title,
+                        link,
+                        summary,
+                        date,
+                        source,
+                        matchedId.get()
+                    );
+
                     System.out.println("저장 직전 summary: " + dto.summary());
                     newsArticleService.saveIfNotExists(dto);
                 }
