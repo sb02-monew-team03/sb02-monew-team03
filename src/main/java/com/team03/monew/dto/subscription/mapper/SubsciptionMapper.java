@@ -14,7 +14,7 @@ public class SubsciptionMapper {
         interest.getName(),
         interest.getKeywords(),
         interest.getSubscriberCount(),
-        interest.getCreatedAt()
+        subscription.getCreatedAt()
     );
   }
 

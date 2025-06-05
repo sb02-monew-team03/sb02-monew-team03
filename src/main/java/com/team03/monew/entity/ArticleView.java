@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ArticleView {
+public class ArticleView extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -35,12 +35,8 @@ public class ArticleView {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
     public ArticleView(NewsArticle article, User user) {
         this.article = article;
         this.user = user;
     }
 }
-

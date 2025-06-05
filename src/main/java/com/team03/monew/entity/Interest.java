@@ -24,7 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Interest extends BaseTimeEntity{
+public class Interest extends BaseTimeEntity {
   @Id @GeneratedValue
   private UUID id;
 
@@ -36,7 +36,5 @@ public class Interest extends BaseTimeEntity{
 
   @Column(nullable = false)
   private int subscriberCount = 0;
-
-
 
 }
