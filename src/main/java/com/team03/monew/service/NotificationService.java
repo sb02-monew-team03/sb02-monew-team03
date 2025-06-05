@@ -79,8 +79,7 @@ public class NotificationService {
           .relatedType(Notification.ResourceType.INTEREST)
           .relatedId(interest.getId())
           .checked(false)
-          .createdAt(LocalDateTime.now())
-          .updatedAt(LocalDateTime.now())
+
           .build();
 
       notificationRepository.save(notification);
@@ -102,10 +101,14 @@ public class NotificationService {
         .relatedType(Notification.ResourceType.COMMENT)
         .relatedId(commentId)
         .checked(false)
-        .createdAt(LocalDateTime.now())
-        .updatedAt(LocalDateTime.now())
         .build();
 
     notificationRepository.save(notification);
+  }
+
+  @Transactional
+  public void deleteCheckedNotificationsOlderThanOneWeek() {
+    LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+    notificationRepository.deleteByCheckedIsTrueAndUpdatedAtBefore(oneWeekAgo);
   }
 }

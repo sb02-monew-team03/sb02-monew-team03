@@ -4,6 +4,8 @@ import com.team03.monew.external.naver.NaverApiCollector;
 import com.team03.monew.external.rss.RssCollector;
 import com.team03.monew.service.NewsBackupService;
 import java.time.LocalDate;
+import com.team03.monew.repository.NotificationRepository;
+import com.team03.monew.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ public class NewsScheduler {
     // 각 콜렉터를 통해 정보를 받아옴(api, rss 구분)
     private final NaverApiCollector naverApiCollector;
     private final RssCollector rssCollector;
+    private final NotificationService notificationService;
 
     private final NewsBackupService newsBackupService;
 
@@ -30,6 +33,13 @@ public class NewsScheduler {
     public void runDailyBackup() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         newsBackupService.backupArticlesFor(yesterday);
+    }
+
+    @Scheduled(cron = "0 0 3 * * *") // 매일 새벽 3시에 알림 정리
+    public void deleteOldNotifications() {
+        System.out.println("[Scheduler] 오래된 알림 삭제 시작");
+        notificationService.deleteCheckedNotificationsOlderThanOneWeek();
+        System.out.println("[Scheduler] 오래된 알림 삭제 완료");
     }
 }
 
