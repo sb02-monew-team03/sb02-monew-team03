@@ -1,6 +1,7 @@
 package com.team03.monew.dto.newsArticle.request;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record NewsArticleRequestDto(
@@ -9,5 +10,5 @@ public record NewsArticleRequestDto(
     String summary,
     LocalDateTime date,
     String source,
-    UUID interestId
+    List<UUID> interestIds
 ) {}
