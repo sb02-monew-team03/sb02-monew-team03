@@ -24,7 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Notification {
+public class Notification extends BaseTimeEntity{
   @Id @GeneratedValue
   private UUID id;
 
@@ -44,11 +44,7 @@ public class Notification {
   @Column(nullable = false)
   private boolean checked = false;
 
-  @Column(nullable = false)
-  private LocalDateTime createdAt = LocalDateTime.now();
 
-  @Column(nullable = false)
-  private LocalDateTime updatedAt = LocalDateTime.now();
 
   public enum ResourceType {
     INTEREST, COMMENT
