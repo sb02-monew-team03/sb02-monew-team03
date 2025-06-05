@@ -74,10 +74,10 @@ public class NewsArticleRepositoryImpl implements NewsArticleRepositoryCustom {
         Order order = direction.equalsIgnoreCase("ASC") ? Order.ASC : Order.DESC;
 
         return switch (orderBy) {
-            case "date" -> new OrderSpecifier<>(order, article.date);
+            case "publishDate" -> new OrderSpecifier<>(order, article.date);
             case "commentCount" -> new OrderSpecifier<>(order, article.comments.size());
             case "viewCount" -> new OrderSpecifier<>(order, article.viewCount);
-            default -> throw new CustomException(ErrorCode.INVALID_TYPE_VALUE, new ErrorDetail("date, commentCount, vieCount", "orderBy", orderBy), ExceptionType.NEWSARTICLE);
+            default -> throw new CustomException(ErrorCode.INVALID_TYPE_VALUE, new ErrorDetail("publishdate, commentCount, viewCount", "orderBy", orderBy), ExceptionType.NEWSARTICLE);
         };
     }
 }
