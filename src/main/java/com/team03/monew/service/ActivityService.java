@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public interface ActivityService {
 
-    UserActivityDto getUserActivity(UUID userId);
+    UserActivityDto getUserActivity(UUID userId, UUID requesterId);
 }

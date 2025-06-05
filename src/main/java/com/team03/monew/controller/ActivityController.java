@@ -18,11 +18,12 @@ public class ActivityController {
 
     private final ActivityService activityService;
 
-    @GetMapping
+    @GetMapping("/{userId}")
     public ResponseEntity<UserActivityDto> getUserActivity(
-        @RequestHeader("Monew-Request-User-ID") UUID userId
+        @PathVariable UUID userId,
+        @RequestHeader("Monew-Request-User-ID") UUID requesterId
     ) {
-        UserActivityDto response = activityService.getUserActivity(userId);
+        UserActivityDto response = activityService.getUserActivity(userId, requesterId);
         return ResponseEntity.ok(response);
     }
 }

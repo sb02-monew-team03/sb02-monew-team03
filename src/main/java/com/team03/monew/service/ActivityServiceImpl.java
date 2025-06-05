@@ -33,12 +33,17 @@ public class ActivityServiceImpl implements ActivityService {
     private final ArticleViewRepository articleViewRepository;
 
     @Override
-    public UserActivityDto getUserActivity(UUID userId) {
+    public UserActivityDto getUserActivity(UUID userId, UUID requesterId) {
+        if (!userId.equals(requesterId)) {
+            ErrorDetail detail = new ErrorDetail("USER", "userId", requesterId.toString());
+            throw new CustomException(ErrorCode.FORBIDDEN, detail, ExceptionType.USER);
+        }
+
         // 1. 사용자 정보 조회
         User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> {
             ErrorDetail detail = new ErrorDetail("UUID", "userId", userId.toString());
             return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
-            });
+        });
 
         // 2. 구독 중인 관심사 조회 (구독 최신순 정렬)
         List<SubscriptionDto> subscriptions = subscriptionRepository
