@@ -5,6 +5,7 @@ import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.response.CommentDto;
 import com.team03.monew.dto.comment.response.CursorPageResponseCommentDto;
+import com.team03.monew.service.NotificationService;
 import com.team03.monew.util.OrderBy;
 import com.team03.monew.util.SortDirection;
 import com.team03.monew.service.CommentService;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
 
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     @GetMapping()
     public CursorPageResponseCommentDto<CommentDto> getCommentsWithCursorPaging(
@@ -60,6 +62,8 @@ public class CommentController {
     @PostMapping("/{commentId}/comment-likes")
     public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable UUID commentId,  @RequestHeader("Monew-Request-User-ID") UUID userId) {
         CommentLikeDto commentLikeDto = commentService.commentLikes(commentId, userId);
+        notificationService.notifyCommentLiked(userId,commentId);
+
         return ResponseEntity.status(HttpStatus.OK).body(commentLikeDto);
     }
 
