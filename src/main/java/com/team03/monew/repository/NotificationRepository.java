@@ -39,5 +39,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
   @Query("UPDATE Notification n SET n.checked = true, n.updatedAt = CURRENT_TIMESTAMP WHERE n.user.id = :userId")
   void updateAllCheckedByUserId(@Param("userId") UUID userId);
 
+  void deleteByCheckedIsTrueAndUpdatedAtBefore(LocalDateTime dateTime);
+
   long countByUserId(UUID userId);
 }

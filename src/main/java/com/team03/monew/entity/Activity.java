@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
-@Table(name = "activities")
+// @Entity -> 추후 MongoDB사용시 주석 해제 예정 (PostgreSQL에서는 테이블 생성안함)
+// @Table(name = "activities")
 public class Activity {
 
     @Id

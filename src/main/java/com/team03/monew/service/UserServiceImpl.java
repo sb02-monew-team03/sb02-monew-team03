@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 활동 내역은 수동 삭제 (1:1 관계이므로 cascade 작동 x)
-        activityRepository.deleteByUser(user);
+//        activityRepository.deleteByUser(user);  -> 추후 MongoDB 사용시 교체, PostgreSQL에서는 Activity 테이블이 존재하지 않아서 살려둘 필요X
 
         // 사용자 계정을 물리적으로 삭제 처리 (연관 요소 cascade 로 자동 삭제)
         userRepository.delete(user);
