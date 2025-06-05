@@ -9,6 +9,7 @@ import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.service.NewsArticleService;
+import com.team03.monew.service.NewsRestoreService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NewsArticleController {
 
     private final NewsArticleService newsArticleService;
+    private final NewsRestoreService newsRestoreService;
 
     @PostMapping("/{articleId}/article-views")
     public ResponseEntity<ArticleViewDto> saveArticleView(
@@ -88,7 +90,7 @@ public class NewsArticleController {
         @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
         @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
 
-        List<ArticleRestoreResultDto> results = newsArticleService.restore(from, to);
+        List<ArticleRestoreResultDto> results = newsRestoreService.restore(from, to);
         return ResponseEntity.ok(results);
     }
 

@@ -2,6 +2,7 @@ package com.team03.monew.repository;
 
 import com.team03.monew.entity.NewsArticle;
 import com.team03.monew.repository.custom.NewsArticleRepositoryCustom;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,4 +20,7 @@ public interface NewsArticleRepository extends JpaRepository<NewsArticle, UUID>,
 
     // 복구용. 이미 데이터베이스에 존재하는지 확인
     boolean existsByOriginalLink(String originalLink);
+
+    // 백업용
+    List<NewsArticle> findByDateBetween(LocalDateTime start, LocalDateTime end);
 }
