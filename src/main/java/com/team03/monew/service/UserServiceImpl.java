@@ -10,7 +10,7 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
-import com.team03.monew.repository.ActivityRepository;
+//import com.team03.monew.repository.ActivityRepository;
 import com.team03.monew.repository.UserRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final ActivityRepository activityRepository;
+//    private final ActivityRepository activityRepository;
 
     @Override
     public UserDto register(UserRegisterRequest request) {
