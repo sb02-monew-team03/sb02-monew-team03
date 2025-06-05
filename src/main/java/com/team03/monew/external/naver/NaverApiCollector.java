@@ -1,9 +1,10 @@
 package com.team03.monew.external.naver;
 
 import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
+import com.team03.monew.dto.newsArticle.response.NaverResponseDto;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.repository.InterestRepository;
-import com.team03.monew.service.NewsArticleService;
+import com.team03.monew.service.news.NewsArticleService;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;

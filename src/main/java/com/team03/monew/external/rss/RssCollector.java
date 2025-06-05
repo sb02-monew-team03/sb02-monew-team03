@@ -3,7 +3,7 @@ package com.team03.monew.external.rss;
 import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.service.InterestService;
-import com.team03.monew.service.NewsArticleService;
+import com.team03.monew.service.news.NewsArticleService;
 import com.team03.monew.service.NotificationService;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

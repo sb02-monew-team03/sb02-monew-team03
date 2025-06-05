@@ -1,4 +1,4 @@
-package com.team03.monew.service;
+package com.team03.monew.service.news;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

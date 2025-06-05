@@ -20,7 +20,7 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
-import com.team03.monew.service.NewsArticleService;
+import com.team03.monew.service.news.NewsArticleService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

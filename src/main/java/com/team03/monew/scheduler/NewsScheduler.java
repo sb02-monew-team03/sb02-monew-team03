@@ -2,7 +2,7 @@ package com.team03.monew.scheduler;
 
 import com.team03.monew.external.naver.NaverApiCollector;
 import com.team03.monew.external.rss.RssCollector;
-import com.team03.monew.service.NewsBackupService;
+import com.team03.monew.service.news.NewsBackupService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

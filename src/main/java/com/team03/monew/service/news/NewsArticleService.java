@@ -1,4 +1,4 @@
-package com.team03.monew.service;
+package com.team03.monew.service.news;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.monew.dto.newsArticle.mapper.ArticleViewMapper;
