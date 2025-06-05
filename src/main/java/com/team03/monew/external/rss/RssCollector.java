@@ -3,8 +3,8 @@ package com.team03.monew.external.rss;
 import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.service.InterestService;
-import com.team03.monew.service.NewsArticleService;
 import com.team03.monew.service.NotificationService;
+import com.team03.monew.service.news.NewsArticleService;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -50,7 +49,7 @@ public class RssCollector {
             Map<Interest, Integer> interestArticleCount = new HashMap<>();
             Map<Interest, List<String>> interestKeywordMap = interestService.getInterestKeywordMap();
 
-            System.out.println("[" + source + "] RSS 수집 시작");
+//            System.out.println("[" + source + "] RSS 수집 시작");
             for (Element item : items) {
                 String title = item.selectFirst("title").text();
                 String link = item.selectFirst("link").text();
@@ -58,43 +57,48 @@ public class RssCollector {
                 Element descriptionEl = item.selectFirst("description");
                 String rawSummary = descriptionEl != null ? descriptionEl.text() : "";
                 String summary = cleanSummary(rawSummary);
-
-                System.out.println("제목: " + title);
-                System.out.println("요약: " + summary);
                 LocalDateTime date = parseRfc822(pubDate);
 
-                Optional<UUID> matchedId = newsArticleService.findMatchingInterestId(title, summary);
+//                System.out.println("제목: " + title);
+//                System.out.println("요약: " + summary);
 
-                if (matchedId.isPresent()) {
+                // 키워드를 통해 관심사 추가하기
+                List<UUID> matchedInterestIds = interestKeywordMap.entrySet().stream()
+                    .filter(entry -> entry.getValue().stream().anyMatch(k -> title.contains(k) || summary.contains(k)))
+                    .map(entry -> entry.getKey().getId())
+                    .distinct()
+                    .toList();
+
+                if (!matchedInterestIds.isEmpty()) {
                     NewsArticleRequestDto dto = new NewsArticleRequestDto(
                         title,
                         link,
                         summary,
                         date,
                         source,
-                        matchedId.get()
+                        matchedInterestIds
                     );
 
-                    System.out.println("저장 직전 summary: " + dto.summary());
+//                    System.out.println("저장 직전 summary: " + dto.summary());
                     newsArticleService.saveIfNotExists(dto);
-                    for (Map.Entry<Interest, List<String>> entry : interestKeywordMap.entrySet()) {
-                        Interest interest = entry.getKey();
-                        List<String> keywords = entry.getValue();
 
-                        // 관심사 키워드 중 하나라도 포함되면 카운트 증가
-                        if (keywords.stream().anyMatch(k -> title.contains(k) || summary.contains(k))) {
+                    // 알림 카운트 누적 (관심사별)
+                    for (UUID id : matchedInterestIds) {
+                        Interest interest = interestKeywordMap.keySet().stream()
+                            .filter(i -> i.getId().equals(id))
+                            .findFirst()
+                            .orElse(null);
+
+                        if (interest != null) {
                             interestArticleCount.merge(interest, 1, Integer::sum);
                         }
                     }
-
-                    for (Map.Entry<Interest, Integer> entry : interestArticleCount.entrySet()) {
-                        Interest interest = entry.getKey();
-                        int articleCount = entry.getValue();
-
-                        notificationService.notifyInterestNews(interest, articleCount);
-                    }
-
                 }
+            }
+
+            // 알림 전송
+            for (Map.Entry<Interest, Integer> entry : interestArticleCount.entrySet()) {
+                notificationService.notifyInterestNews(entry.getKey(), entry.getValue());
             }
         } catch (IOException e) {
             System.err.println("RSS 수집 실패: " + rssUrl);

@@ -1,4 +1,4 @@
-package com.team03.monew.service;
+package com.team03.monew.service.news;
 
 import com.team03.monew.entity.NewsArticle;
 import com.team03.monew.repository.NewsArticleRepository;

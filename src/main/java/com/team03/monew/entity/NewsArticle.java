@@ -3,10 +3,11 @@ package com.team03.monew.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -39,8 +40,13 @@ public class NewsArticle {
 
   private String summary;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Interest interest;
+  @ManyToMany
+  @JoinTable(
+      name = "news_article_interest",
+      joinColumns = @JoinColumn(name = "article_id"),
+      inverseJoinColumns = @JoinColumn(name = "interest_id")
+  )
+  private List<Interest> interests = new ArrayList<>();
 
   @Column(nullable = false)
   private int viewCount = 0;
@@ -50,7 +56,6 @@ public class NewsArticle {
 
   @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments = new ArrayList<>();
-
 
   // 연관관계 편의 메서드
   public void addComment(Comment comment) {
@@ -75,14 +80,14 @@ public class NewsArticle {
   @Builder
   public NewsArticle(UUID id, String source, String originalLink, String title,
       LocalDateTime date, String summary,
-      Interest interest, int viewCount, boolean deleted) {
+      List<Interest> interests, int viewCount, boolean deleted) {
     this.id = id;
     this.source = source;
     this.originalLink = originalLink;
     this.title = title;
     this.date = date;
     this.summary = summary;
-    this.interest = interest;
+    this.interests = interests;
     this.viewCount = viewCount;
     this.deleted = deleted;
   }

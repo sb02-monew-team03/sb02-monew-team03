@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 import org.jsoup.Jsoup;
@@ -18,14 +19,14 @@ public class NaverNewsItem {
     private String description;
     private String pubDate;
 
-    public NewsArticleRequestDto toDto(UUID interestId) {
+    public NewsArticleRequestDto toDto(List<UUID> interestIds) {
         return new NewsArticleRequestDto(
             this.title,
             this.link,
             cleanSummary(this.description),
             parse(this.pubDate),
             "NAVER",
-            interestId
+            interestIds
         );
     }
 

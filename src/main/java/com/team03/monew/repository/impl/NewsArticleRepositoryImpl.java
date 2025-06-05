@@ -5,6 +5,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.monew.entity.NewsArticle;
+import com.team03.monew.entity.QInterest;
 import com.team03.monew.entity.QNewsArticle;
 import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
@@ -36,6 +37,7 @@ public class NewsArticleRepositoryImpl implements NewsArticleRepositoryCustom {
         int limit
     ) {
         QNewsArticle article = QNewsArticle.newsArticle;
+        QInterest interest = QInterest.interest;
         BooleanBuilder condition = new BooleanBuilder();
         condition.and(article.deleted.isFalse());
 
@@ -44,7 +46,7 @@ public class NewsArticleRepositoryImpl implements NewsArticleRepositoryCustom {
                 .or(article.summary.containsIgnoreCase(keyword)));
         }
         if (interestId != null) {
-            condition.and(article.interest.id.eq(interestId));
+            condition.and(interest.id.eq(interestId));
         }
         if (sourceIn != null && !sourceIn.isEmpty()) {
             condition.and(article.source.in(sourceIn));
@@ -63,6 +65,7 @@ public class NewsArticleRepositoryImpl implements NewsArticleRepositoryCustom {
 
         return queryFactory
             .selectFrom(article)
+            .leftJoin(article.interests, interest)
             .where(condition)
             .orderBy(orderSpecifier)
             .limit(limit + 1)

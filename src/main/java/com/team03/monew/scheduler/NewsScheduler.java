@@ -2,7 +2,7 @@ package com.team03.monew.scheduler;
 
 import com.team03.monew.external.naver.NaverApiCollector;
 import com.team03.monew.external.rss.RssCollector;
-import com.team03.monew.service.NewsBackupService;
+import com.team03.monew.service.news.NewsBackupService;
 import java.time.LocalDate;
 import com.team03.monew.repository.NotificationRepository;
 import com.team03.monew.service.NotificationService;
@@ -23,7 +23,7 @@ public class NewsScheduler {
 
     @Scheduled(cron = "0 0 * * * *") // 매 시 정각마다 실행
     public void collectNews() {
-        System.out.println("[Scheduler] 수집 시작됨");
+//        System.out.println("[Scheduler] 수집 시작됨");
 
         naverApiCollector.collect();
         rssCollector.collectAll();

@@ -1,4 +1,4 @@
-package com.team03.monew.service;
+package com.team03.monew.service.news;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,23 +59,22 @@ public class NewsRestoreService {
                     // 중복 제거
                     .filter(dto -> !newsArticleRepository.existsByOriginalLink(dto.originalLink()))
                     .map(dto -> {
-                        Optional<Interest> optionalInterest = interestRepository.findById(dto.interestId());
+                        List<Interest> interests = interestRepository.findAllById(dto.interestIds());
 
-                        if (optionalInterest.isEmpty()) {
-                            System.out.println("⏭ 관심사 없음, 복구 제외됨: title=" + dto.title() + ", interestId=" + dto.interestId());
+                        if (interests.isEmpty()) {
+                            System.out.println("⏭ 관심사 없음, 복구 제외됨: title=" + dto.title() + ", interestId=" + dto.interestIds());
                             return Optional.<NewsArticle>empty(); // 관심사 없으면 제외
                         }
 
-                        Interest interest = optionalInterest.get();
                         NewsArticle article = NewsArticle.builder()
                             .source(dto.source())
                             .originalLink(dto.originalLink())
                             .title(dto.title())
                             .summary(dto.summary())
                             .date(dto.date())
-                            .interest(interest)
-                            .viewCount(0)
-                            .deleted(false)
+                            .interests(interests)
+                            .viewCount(dto.viewCount())
+                            .deleted(dto.deleted())
                             .build();
 
                         return Optional.of(article);

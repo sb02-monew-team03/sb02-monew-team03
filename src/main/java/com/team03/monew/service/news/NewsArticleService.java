@@ -1,4 +1,4 @@
-package com.team03.monew.service;
+package com.team03.monew.service.news;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.monew.dto.newsArticle.mapper.ArticleViewMapper;
@@ -148,14 +148,16 @@ public class NewsArticleService {
     public void saveIfNotExists(NewsArticleRequestDto dto) {
         boolean exists = newsArticleRepository.existsByOriginalLink(dto.originalLink());
         if (!exists) {
-            Interest interest = interestRepository.getReferenceById(dto.interestId());
+            List<Interest> interests = interestRepository.findAllById(dto.interestIds());
             NewsArticle article = NewsArticle.builder()
                 .title(dto.title())
                 .originalLink(dto.originalLink())
                 .summary(dto.summary())
                 .date(dto.date())
                 .source(dto.source())
-                .interest(interest)
+                .interests(interests)
+                .viewCount(0)
+                .deleted(false)
                 .build();
 
             newsArticleRepository.save(article);
@@ -170,15 +172,4 @@ public class NewsArticleService {
         );
     }
 
-    // 데이터 수집 시 관심사 설정을 위한 메서드
-    @Transactional(readOnly = true)
-    public Optional<UUID> findMatchingInterestId(String title, String summary) {
-        List<Interest> interests = interestRepository.findAll();
-
-        return interests.stream()
-            .filter(i -> i.getKeywords().stream()
-                .anyMatch(k -> title.contains(k) || summary.contains(k)))
-            .map(Interest::getId)
-            .findFirst(); // 첫 번째 매칭된 Interest만 사용
-    }
 }
