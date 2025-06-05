@@ -21,6 +21,7 @@ public class NewsScheduler {
     @Scheduled(cron = "0 0 * * * *") // 매 시 정각마다 실행
     public void collectNews() {
         System.out.println("[Scheduler] 수집 시작됨");
+
         naverApiCollector.collect();
         rssCollector.collectAll();
     }

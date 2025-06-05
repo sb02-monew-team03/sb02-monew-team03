@@ -17,9 +17,12 @@ import com.team03.monew.repository.SubscriptionRepository;
 import com.team03.monew.repository.UserRepository;
 import com.team03.monew.util.SimilarityUtil;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,6 +135,18 @@ public class InterestService {
             "interest","interesdId","interest"
         ), ExceptionType.INTEREST));
     interestRepository.delete(interest);
+  }
+
+  public Map<Interest, List<String>> getInterestKeywordMap() {
+    List<Interest> interests = interestRepository.findAll();
+
+    Map<Interest, List<String>> result = new HashMap<>();
+    for (Interest interest : interests) {
+      List<String> keywordNames = interest.getKeywords();
+      result.put(interest, keywordNames);
+    }
+
+    return result;
   }
 
   private void increaseSubscriberCount(Interest interest) {
