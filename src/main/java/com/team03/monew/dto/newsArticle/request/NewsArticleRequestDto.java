@@ -11,4 +11,3 @@ public record NewsArticleRequestDto(
     String source,
     UUID interestId
 ) {}
-

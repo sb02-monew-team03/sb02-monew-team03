@@ -71,6 +71,9 @@ dependencies {
 
     // RSS를 파싱하기 위한 파서
     implementation 'org.jsoup:jsoup:1.20.1'
+
+    // AWS S3 SDK 의존성
+    implementation 'software.amazon.awssdk:s3:2.31.7'
 }
 
 tasks.named('test') {
