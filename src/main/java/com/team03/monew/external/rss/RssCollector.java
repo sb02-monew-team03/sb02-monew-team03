@@ -1,13 +1,18 @@
 package com.team03.monew.external.rss;
 
 import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
+import com.team03.monew.entity.Interest;
+import com.team03.monew.service.InterestService;
 import com.team03.monew.service.NewsArticleService;
+import com.team03.monew.service.NotificationService;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +27,8 @@ import org.springframework.stereotype.Component;
 public class RssCollector {
 
     private final NewsArticleService newsArticleService;
+    private final InterestService interestService;
+    private final NotificationService notificationService;
 
     private static final Map<String, String> RSS_SOURCES = Map.of(
         "https://www.hankyung.com/feed/all-news", "한국경제",
@@ -38,6 +45,8 @@ public class RssCollector {
         try {
             Document doc = Jsoup.connect(rssUrl).get();
             Elements items = doc.select("item");
+            Map<Interest, Integer> interestArticleCount = new HashMap<>();
+            Map<Interest, List<String>> interestKeywordMap = interestService.getInterestKeywordMap();
 
             System.out.println("[" + source + "] RSS 수집 시작");
             for (Element item : items) {
@@ -65,6 +74,23 @@ public class RssCollector {
                 if (newsArticleService.containsKeyword(title, summary)) {
                     System.out.println("저장 직전 summary: " + dto.summary());
                     newsArticleService.saveIfNotExists(dto);
+                    for (Map.Entry<Interest, List<String>> entry : interestKeywordMap.entrySet()) {
+                        Interest interest = entry.getKey();
+                        List<String> keywords = entry.getValue();
+
+                        // 관심사 키워드 중 하나라도 포함되면 카운트 증가
+                        if (keywords.stream().anyMatch(k -> title.contains(k) || summary.contains(k))) {
+                            interestArticleCount.merge(interest, 1, Integer::sum);
+                        }
+                    }
+
+                    for (Map.Entry<Interest, Integer> entry : interestArticleCount.entrySet()) {
+                        Interest interest = entry.getKey();
+                        int articleCount = entry.getValue();
+
+                        notificationService.notifyInterestNews(interest, articleCount);
+                    }
+
                 }
             }
         } catch (IOException e) {

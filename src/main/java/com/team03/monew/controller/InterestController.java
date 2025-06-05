@@ -6,6 +6,7 @@ import com.team03.monew.dto.interest.InterestRegisterRequest;
 import com.team03.monew.dto.interest.InterestUpdateRequest;
 import com.team03.monew.dto.subscription.SubscriptionDto;
 import com.team03.monew.service.InterestService;
+import com.team03.monew.service.NotificationService;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterestController {
 
   private final InterestService interestService;
+  private final NotificationService notificationService;
 
   @PostMapping
   public ResponseEntity<InterestDto> registerInterest(@RequestBody @Valid InterestRegisterRequest request) {
@@ -69,6 +71,7 @@ public class InterestController {
       @RequestHeader("Monew-Request-User-ID") UUID userId
   ) {
     SubscriptionDto dto = interestService.subscribe(interestId, userId);
+
     return ResponseEntity.ok(dto);
   }
 
