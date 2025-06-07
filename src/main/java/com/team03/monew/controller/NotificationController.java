@@ -23,10 +23,10 @@ public class NotificationController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponseNotificationDto> getNotifications(
-      @RequestHeader("Monew-Request-User-ID") UUID userId,
-      @RequestParam(required = false) UUID cursor,
-      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
-      @RequestParam(defaultValue = "50") int limit
+      @RequestHeader(name = "Monew-Request-User-ID") UUID userId,
+      @RequestParam(name = "cursor", required = false) UUID cursor,
+      @RequestParam(name = "after",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
+      @RequestParam(name = "limit" , defaultValue = "50") int limit
   ) {
     CursorPageResponseNotificationDto result = notificationService.getNotifications(userId, cursor, after, limit);
     return ResponseEntity.ok(result);
@@ -35,7 +35,7 @@ public class NotificationController {
 
   @PatchMapping
   public ResponseEntity<Void> confirmAllNotifications(
-      @RequestHeader("Monew-Request-User-ID") UUID userId
+      @RequestHeader(name = "Monew-Request-User-ID") UUID userId
   ) {
     notificationService.confirmAll(userId);
     return ResponseEntity.ok().build();
@@ -43,7 +43,7 @@ public class NotificationController {
 
   @PatchMapping("/{notificationId}")
   public ResponseEntity<Void> confirmNotification(
-      @RequestHeader("Monew-Request-User-ID") UUID userId,
+      @RequestHeader(name = "Monew-Request-User-ID") UUID userId,
       @PathVariable UUID notificationId
   ) {
     notificationService.confirm(notificationId, userId);
