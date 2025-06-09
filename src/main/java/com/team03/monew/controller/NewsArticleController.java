@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/articles")
 @RequiredArgsConstructor
@@ -38,7 +37,7 @@ public class NewsArticleController {
     @PostMapping("/{articleId}/article-views")
     public ResponseEntity<ArticleViewDto> saveArticleView(
         @PathVariable(name = "articleId") UUID articleId,
-        @RequestHeader("MoNew-Request-User-ID") UUID userId
+        @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         ArticleViewDto dto = newsArticleService.saveArticleView(articleId, userId);
         return ResponseEntity.ok(dto);
@@ -60,9 +59,6 @@ public class NewsArticleController {
             @RequestParam(name = "limit", defaultValue = "50") Integer limit,
             @RequestHeader(name = "Monew-Request-User-ID") UUID requestUserId
     ){
-        //  요청 파라미터 로깅
-        log.info("[GET /api/articles] requestUserId={}, keyword={}, interestId={}, sourceIn={}, publishDateFrom={}, publishDateTo={}, orderBy={}, direction={}, cursor={}, after={}, limit={}",
-                requestUserId, keyword, interestId, sourceIn, publishDateFrom, publishDateTo, orderBy, direction, cursor, after, limit);
 
         validateOrderBy(orderBy);
         validateDirection(direction);
