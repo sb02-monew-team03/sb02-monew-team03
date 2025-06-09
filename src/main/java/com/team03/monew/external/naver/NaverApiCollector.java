@@ -39,7 +39,7 @@ public class NaverApiCollector {
     private final NewsArticleRepository newsArticleRepository;
 
     public void collect() {
-        List<Interest> interests = interestRepository.findAll();
+        List<Interest> interests = interestRepository.findAllWithKeywords();
         Map<String, NaverNewsItem> itemMap = new HashMap<>(); // 기사 링크 기준으로 Item 보관, key: 뉴스링크, value: NaverNewsItem
         Map<String, Set<UUID>> articleInterestMap = new HashMap<>(); // 기사 link -> 관심사 ID 누적, key: 뉴스링크, value: 관심사 ID들
 
