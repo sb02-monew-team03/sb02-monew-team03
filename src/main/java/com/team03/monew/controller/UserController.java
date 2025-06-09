@@ -35,8 +35,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateNickname(
         @PathVariable(name = "userId") UUID userId,
         @RequestBody @Valid UserUpdateRequest request,
-        @RequestHeader(name ="MoNew-Request-User-ID") UUID requesterId
-        @RequestHeader("Monew-Request-User-ID") UUID requesterId
+        @RequestHeader(name ="Monew-Request-User-ID") UUID requesterId
     ) {
         UserDto updated = userService.updateNickname(userId, requesterId, request);
         return ResponseEntity.ok(updated);
@@ -45,8 +44,6 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(
         @PathVariable(name = "userId") UUID userId,
-        @RequestHeader(name = "MoNew-Request-User-ID") UUID requesterId
-        @PathVariable UUID userId,
         @RequestHeader("Monew-Request-User-ID") UUID requesterId
     ) {
         userService.deleteUser(userId, requesterId);
