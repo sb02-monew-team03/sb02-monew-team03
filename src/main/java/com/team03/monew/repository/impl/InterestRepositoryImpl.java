@@ -72,7 +72,7 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
             i.getName(),
             i.getKeywords(),
             i.getSubscriberCount(),
-            false // 구독 여부 판단 로직 없음
+            i.getSubscriberCount()>0 // 구독 여부 판단 로직 없음
         ))
         .toList();
 
