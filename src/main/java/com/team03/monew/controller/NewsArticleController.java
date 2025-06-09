@@ -3,7 +3,6 @@ package com.team03.monew.controller;
 import com.team03.monew.dto.newsArticle.response.ArticleRestoreResultDto;
 import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
 import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
-import com.team03.monew.dto.newsArticle.response.SourcesResponseDto;
 import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
@@ -77,7 +76,7 @@ public class NewsArticleController {
 
 
     @GetMapping("/sources")
-    public ResponseEntity<SourcesResponseDto> getSources() {
+    public ResponseEntity<List<String>> getSources() {
         return ResponseEntity.ok(newsArticleService.getSources());
     }
 
