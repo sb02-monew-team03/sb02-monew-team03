@@ -33,11 +33,7 @@ public class ActivityServiceLazyImpl implements ActivityService {
     private final ArticleViewRepository articleViewRepository;
 
     @Override
-    public UserActivityDto getUserActivity(UUID userId, UUID requesterId) {
-        if (!userId.equals(requesterId)) {
-            ErrorDetail detail = new ErrorDetail("USER", "userId", requesterId.toString());
-            throw new CustomException(ErrorCode.FORBIDDEN, detail, ExceptionType.USER);
-        }
+    public UserActivityDto getUserActivity(UUID userId) {
 
         // 1. 사용자 정보 조회
         User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> {

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ActivityServiceMongoImpl implements ActivityService {
 
     @Override
-    public UserActivityDto getUserActivity(UUID userId, UUID requesterId) {
+    public UserActivityDto getUserActivity(UUID userId) {
         return null;
     }
 }
