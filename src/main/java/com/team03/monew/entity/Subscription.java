@@ -9,7 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "subscriptions")
 @Getter
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Subscription extends BaseTimeEntity {
 
     @Id
@@ -34,4 +32,9 @@ public class Subscription extends BaseTimeEntity {
     @JoinColumn(name = "interest_id")
     private Interest interest;
 
+    @Builder
+    public Subscription(User user, Interest interest) {
+        this.user = user;
+        this.interest = interest;
+    }
 }

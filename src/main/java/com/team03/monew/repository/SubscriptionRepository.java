@@ -14,7 +14,12 @@ import org.springframework.data.repository.query.Param;
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID>,
     SubscriptionRepositoryCustom {
 
-    Optional<Subscription> findByUserIdAndInterestId(UUID userId, UUID interestId);
+    @Query("""
+    SELECT s FROM Subscription s 
+    WHERE s.user.id = :userId AND s.interest.id = :interestId
+""")
+    Optional<Subscription> findByUserAndInterest(@Param("userId") UUID userId, @Param("interestId") UUID interestId);
+
 
     void deleteByUserIdAndInterestId(UUID userId, UUID interestId);
 
