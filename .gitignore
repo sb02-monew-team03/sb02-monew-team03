@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 .DS_Store
 docker-compose.yml
+./logs
 
 ### STS ###
 .apt_generated

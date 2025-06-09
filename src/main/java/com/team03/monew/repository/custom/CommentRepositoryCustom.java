@@ -1,6 +1,7 @@
 package com.team03.monew.repository.custom;
 
 import com.team03.monew.entity.Comment;
+import com.team03.monew.entity.User;
 import com.team03.monew.util.OrderBy;
 import com.team03.monew.util.SortDirection;
 import java.time.LocalDateTime;
@@ -18,4 +19,6 @@ public interface CommentRepositoryCustom {
             int limit,
             UUID requesterId
     );
+
+    List<Comment> findTop10ByUserWithNewsAndUser(User user);
 }
