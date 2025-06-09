@@ -22,7 +22,7 @@ public class ActivityController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserActivityDto> getUserActivity(
         @PathVariable UUID userId,
-        @RequestHeader("MoNew-Request-User-ID") UUID requesterId
+        @RequestHeader("Monew-Request-User-ID") UUID requesterId
     ) {
         ActivityService activityService = activityServiceRouter.resolve();
         UserActivityDto response = activityService.getUserActivity(userId, requesterId);
