@@ -1,4 +1,4 @@
-package com.team03.monew.service;
+package com.team03.monew.service.activity;
 
 import com.team03.monew.dto.comment.response.CommentActivityDto;
 import com.team03.monew.dto.comment.response.CommentLikeActivityDto;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ActivityServiceImpl implements ActivityService {
+public class ActivityServiceLazyImpl implements ActivityService {
 
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;

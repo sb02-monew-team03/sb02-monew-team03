@@ -25,6 +25,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -138,7 +139,13 @@ public class NewsArticleService {
     // 기사가 키워드를 포함하고 있는지 확인
     @Transactional(readOnly = true)
     public boolean containsKeyword(String title, String desc) {
-        List<String> keywords = interestRepository.findAllKeywords(); // "AI", "정치", "게임" 등
+        List<Interest> interests = interestRepository.findAllWithKeywords();
+
+        List<String> keywords = interests.stream()
+            .flatMap(interest -> interest.getKeywords().stream())
+            .distinct()
+            .collect(Collectors.toList());
+        // List<String> keywords = interestRepository.findAllKeywords(); // "AI", "정치", "게임" 등
         return keywords.stream().anyMatch(k -> title.contains(k) || desc.contains(k));
     }
 

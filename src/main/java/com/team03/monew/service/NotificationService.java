@@ -89,8 +89,6 @@ public class NotificationService {
           .content(content)
           .relatedType(Notification.ResourceType.INTEREST)
           .relatedId(interest.getId())
-          .checked(false)
-
           .build();
 
       notificationRepository.save(notification);
@@ -111,7 +109,6 @@ public class NotificationService {
         .content(content)
         .relatedType(Notification.ResourceType.COMMENT)
         .relatedId(commentId)
-        .checked(false)
         .build();
 
     notificationRepository.save(notification);

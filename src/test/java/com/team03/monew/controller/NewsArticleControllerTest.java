@@ -68,7 +68,7 @@ class NewsArticleControllerTest {
 
         // When & Then
         mockMvc.perform(post("/api/articles/{articleId}/article-views", articleId)
-                .header("MoNew-Request-User-ID", userId))
+                .header("Monew-Request-User-ID", userId))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.articleId").value(articleId.toString()))
             .andExpect(jsonPath("$.viewedBy").value(userId.toString()))
@@ -88,7 +88,7 @@ class NewsArticleControllerTest {
 
         // When & Then
         mockMvc.perform(post("/api/articles/{articleId}/article-views", articleId)
-                .header("MoNew-Request-User-ID", userId))
+                .header("Monew-Request-User-ID", userId))
             .andExpect(status().isNotFound());
     }
 

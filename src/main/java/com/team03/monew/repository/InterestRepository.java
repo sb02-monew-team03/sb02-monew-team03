@@ -12,6 +12,6 @@ public interface InterestRepository extends JpaRepository<Interest, UUID>,
     @Query("SELECT i.name FROM Interest i")
     List<String> findAllNames();
 
-    @Query("SELECT DISTINCT k FROM Interest i JOIN i.keywords k")
-    List<String> findAllKeywords();
+    @Query("SELECT i FROM Interest i JOIN FETCH i.keywords")
+    List<Interest> findAllWithKeywords();
 }
