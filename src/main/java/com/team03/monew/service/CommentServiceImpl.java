@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
         User user = entityFinder.getUserOrThrow(request.userId());
         NewsArticle article = entityFinder.getNewsArticleOrThrow(request.articleId());
 
-        Comment comment = CommentMapper.toComment(request.comment(), article, user);
+        Comment comment = CommentMapper.toComment(request.content(), article, user);
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
