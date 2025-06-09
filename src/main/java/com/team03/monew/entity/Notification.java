@@ -19,12 +19,22 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "notifications")
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Notification extends BaseTimeEntity{
+
+  @Builder
+  public Notification(User user, String content, ResourceType relatedType, UUID relatedId) {
+    this.user = user;
+    this.content = content;
+    this.relatedType = relatedType;
+    this.relatedId = relatedId;
+    this.checked = false;
+  }
+
+
   @Id @GeneratedValue
   private UUID id;
 
