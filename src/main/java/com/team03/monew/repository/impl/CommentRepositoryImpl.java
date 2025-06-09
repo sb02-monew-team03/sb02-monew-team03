@@ -4,6 +4,9 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.monew.entity.Comment;
 import com.team03.monew.entity.QComment;
+import com.team03.monew.entity.QNewsArticle;
+import com.team03.monew.entity.QUser;
+import com.team03.monew.entity.User;
 import com.team03.monew.repository.custom.CommentRepositoryCustom;
 import com.team03.monew.util.OrderBy;
 import com.team03.monew.util.SortDirection;
@@ -42,4 +45,22 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .limit(limit)
                 .fetch();
     }
+
+    @Override
+    public List<Comment> findTop10ByUserWithNewsAndUser(User user) {
+
+        QComment comment = QComment.comment;
+        QNewsArticle news = QNewsArticle.newsArticle;
+        QUser commentUser = QUser.user;
+
+        return queryFactory
+            .selectFrom(comment)
+            .join(comment.news, news).fetchJoin()
+            .join(comment.user, commentUser).fetchJoin()
+            .where(comment.user.eq(user))
+            .orderBy(comment.createdAt.desc())
+            .limit(10)
+            .fetch();
+    }
+
 }

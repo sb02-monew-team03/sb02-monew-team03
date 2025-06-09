@@ -1,7 +1,8 @@
 package com.team03.monew.controller;
 
 import com.team03.monew.dto.user.UserActivityDto;
-import com.team03.monew.service.ActivityService;
+import com.team03.monew.service.activity.ActivityService;
+import com.team03.monew.service.activity.ActivityServiceRouter;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ActivityController {
 
-    private final ActivityService activityService;
+    private final ActivityServiceRouter activityServiceRouter;
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserActivityDto> getUserActivity(
         @PathVariable UUID userId,
         @RequestHeader("Monew-Request-User-ID") UUID requesterId
     ) {
+        ActivityService activityService = activityServiceRouter.resolve();
         UserActivityDto response = activityService.getUserActivity(userId, requesterId);
         return ResponseEntity.ok(response);
     }
