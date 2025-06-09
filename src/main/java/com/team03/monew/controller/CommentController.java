@@ -40,7 +40,7 @@ public class CommentController {
     @GetMapping()
     public CursorPageResponseCommentDto<CommentDto> getCommentsWithCursorPaging(
             @RequestParam("articleId") UUID articleId,
-            @RequestParam("orderBy") OrderBy orderBy,
+        @RequestParam String orderBy,
             @RequestParam("direction") SortDirection direction,
             @RequestParam(value = "cursor", required = false) UUID cursor,
             @RequestParam(value = "after", required = false)
@@ -49,7 +49,8 @@ public class CommentController {
             @Min(1) @Max(100) int limit,
             @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
-        return commentService.commentCursorPage(articleId, orderBy, direction, cursor, after, limit, userId);
+        OrderBy orderByEnum = OrderBy.fromValue(orderBy);
+        return commentService.commentCursorPage(articleId, orderByEnum, direction, cursor, after, limit, userId);
     }
 
 
