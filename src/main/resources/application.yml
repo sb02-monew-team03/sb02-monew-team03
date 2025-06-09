@@ -1,31 +1,16 @@
 spring:
     application:
         name: monew
-    datasource:
-        url: jdbc:postgresql://localhost:5432/your_db
-        username: your_user
-        password: your_password
-    task:
-        scheduling:
-            pool:
-                size: 1
+    profiles:
+        active: dev  # 운영 환경에서는 'spring.profiles.active=prod'를 환경 변수 또는 실행 옵션(-Dspring.profiles.active=prod)으로 지정하여 prod 설정을 활성화합니다.
 
     jpa:
-        hibernate:
-            ddl-auto: create  # 또는 update, validate 등
         properties:
             hibernate:
                 format_sql: true
                 dialect: org.hibernate.dialect.PostgreSQLDialect
 
-naver:
-    api:
-        client-id: ${NAVER_API_CLIENT_ID}
-        client-secret: ${NAVER_API_CLIENT_SECRET}
-
-aws:
-    s3:
-        access-key: ${AWS_S3_ACCESS_KEY}
-        secret-key: ${AWS_S3_SECRET_KEY}
-        region: ${AWS_S3_REGION}
-        bucket: ${AWS_S3_BUCKET}
+task:
+    scheduling:
+        pool:
+            size: 1

@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USER}
+    password: ${PROD_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    root: WARN
+    com.myapp: INFO                # 핵심 비즈니스 로직만
+    org.springframework: WARN      # 프레임워크 관련 경고 이상만
+    org.hibernate.SQL: OFF         # SQL 로그 완전 비활성화
+    org.hibernate.type: OFF        # 바인딩 로그 비활성화
+
+naver:
+  api:
+    client-id: ${NAVER_API_CLIENT_ID}
+    client-secret: ${NAVER_API_CLIENT_SECRET}
+
+aws:
+  s3:
+    access-key: ${AWS_S3_ACCESS_KEY}
+    secret-key: ${AWS_S3_SECRET_KEY}
+    region: ${AWS_S3_REGION}
+    bucket: ${AWS_S3_BUCKET}
