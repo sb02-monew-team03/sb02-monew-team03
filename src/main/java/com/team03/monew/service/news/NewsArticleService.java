@@ -7,7 +7,6 @@ import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
 import com.team03.monew.dto.newsArticle.response.ArticleDto;
 import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
 import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
-import com.team03.monew.dto.newsArticle.response.SourcesResponseDto;
 import com.team03.monew.entity.ArticleView;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.entity.NewsArticle;
@@ -108,9 +107,9 @@ public class NewsArticleService {
     }
 
     @Transactional(readOnly = true)
-    public SourcesResponseDto getSources() {
+    public List<String> getSources() {
         List<String> sources = newsArticleRepository.findDistinctSources();
-        return new SourcesResponseDto(sources);
+        return sources;
     }
 
     @Transactional
