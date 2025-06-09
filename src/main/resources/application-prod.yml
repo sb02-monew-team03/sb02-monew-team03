@@ -10,10 +10,10 @@ spring:
 logging:
   level:
     root: WARN
-    com.myapp: INFO                # 핵심 비즈니스 로직만
-    org.springframework: WARN      # 프레임워크 관련 경고 이상만
-    org.hibernate.SQL: OFF         # SQL 로그 완전 비활성화
-    org.hibernate.type: OFF        # 바인딩 로그 비활성화
+    com.myapp: INFO
+    org.springframework: WARN
+    org.hibernate.SQL: OFF
+    org.hibernate.type: OFF
 
 naver:
   api:

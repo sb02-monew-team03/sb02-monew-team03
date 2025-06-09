@@ -2,7 +2,7 @@ spring:
     application:
         name: monew
     profiles:
-        active: dev  # 운영 환경에서는 'spring.profiles.active=prod'를 환경 변수 또는 실행 옵션(-Dspring.profiles.active=prod)으로 지정하여 prod 설정을 활성화합니다.
+        active: dev
 
     jpa:
         properties:

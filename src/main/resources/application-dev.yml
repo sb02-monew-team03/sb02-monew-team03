@@ -10,10 +10,10 @@ spring:
 logging:
   level:
     root: INFO
-    com.myapp: DEBUG               # 코드 디버깅 위해 상세하게
-    org.springframework.web: DEBUG  # HTTP 요청/응답 흐름까지
-    org.hibernate.SQL: DEBUG       # 실행되는 SQL 보이게
-    org.hibernate.type: TRACE      # SQL 파라미터 값까지 추적
+    com.myapp: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
 
 naver:
   api:
