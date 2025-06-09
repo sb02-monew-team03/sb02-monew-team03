@@ -95,7 +95,7 @@ public class InterestService {
             ExceptionType.INTEREST));
 
     if (subscriptionRepository.existsByUserIdAndInterestId(userId, interestId)) {
-      Subscription subscrip =  subscriptionRepository.findByUserIdAndInterestId(userId, interestId).orElseThrow();
+      Subscription subscrip =  subscriptionRepository.findByUserAndInterest(userId, interestId).orElseThrow();
 
 
       return SubsciptionMapper.from(subscrip);// 이미 구독 중이면 그대로 반환
@@ -103,7 +103,7 @@ public class InterestService {
 
     Subscription subscription =  subscriptionRepository.save(
         Subscription.builder()
-            .user(userRepository.findById(userId).orElseThrow((
+            .user(userRepository.findByIdAndDeletedFalse(userId).orElseThrow((
                 )->new CustomException(ErrorCode.RESOURCE_NOT_FOUND,
                 new ErrorDetail("User", "userId", "user")
             , ExceptionType.INTEREST)) )
@@ -122,7 +122,7 @@ public class InterestService {
             "interest","interesdId","interest"
         ), ExceptionType.INTEREST));
 
-    subscriptionRepository.findByUserIdAndInterestId(userId, interestId)
+    subscriptionRepository.findByUserAndInterest(userId, interestId)
         .ifPresent(subscription -> {
           subscriptionRepository.delete(subscription);
           decreaseSubscriberCount(interest);
