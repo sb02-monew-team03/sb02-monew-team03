@@ -39,4 +39,4 @@ out/
 .vscode/
 Dockerfile
 docker-compose.yml
-./logs
+logs/
