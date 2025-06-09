@@ -38,7 +38,7 @@ public class NewsArticleController {
     @PostMapping("/{articleId}/article-views")
     public ResponseEntity<ArticleViewDto> saveArticleView(
         @PathVariable UUID articleId,
-        @RequestHeader("MoNew-Request-User-ID") UUID userId
+        @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         ArticleViewDto dto = newsArticleService.saveArticleView(articleId, userId);
         return ResponseEntity.ok(dto);
