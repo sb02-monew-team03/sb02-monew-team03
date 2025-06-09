@@ -76,7 +76,7 @@ public class InterestService {
     // 변경 감지로 자동 저장 (save 호출 안 해도 됨)
     interestRepository.save(interest); // 선택적
   }
-  public Optional<CursorPageResponseInterestDto>  searchInterests(
+  public Optional<CursorPageResponseInterestDto> searchInterests(
       UUID userId,
       String keyword,
       String orderBy,
