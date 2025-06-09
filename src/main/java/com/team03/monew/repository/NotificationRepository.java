@@ -13,53 +13,25 @@ import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
 
-  // 1. cursor + after 둘 다 있음
   @Query("""
-      SELECT n FROM Notification n
-      WHERE n.user.id = :userId AND n.id < :cursor AND n.createdAt < :after
-      ORDER BY n.createdAt DESC
-  """)
-  List<Notification> findByUserIdAndCursorAndAfter(
+        SELECT n FROM Notification n
+        WHERE n.user.id = :userId
+        AND (:cursor IS NULL OR n.id < :cursor)
+        AND (:after IS NULL OR n.createdAt < :after)
+        ORDER BY n.createdAt DESC
+    """)
+  List<Notification> findByCursorAndAfter(
           @Param("userId") UUID userId,
           @Param("cursor") UUID cursor,
           @Param("after") LocalDateTime after,
           Pageable pageable
   );
 
-  // 2. cursor만 있음
-  @Query("""
-      SELECT n FROM Notification n
-      WHERE n.user.id = :userId AND n.id < :cursor
-      ORDER BY n.createdAt DESC
-  """)
-  List<Notification> findByUserIdAndCursor(
-          @Param("userId") UUID userId,
-          @Param("cursor") UUID cursor,
-          Pageable pageable
-  );
-
-  // 3. after만 있음
-  @Query("""
-      SELECT n FROM Notification n
-      WHERE n.user.id = :userId AND n.createdAt < :after
-      ORDER BY n.createdAt DESC
-  """)
-  List<Notification> findByUserIdAndAfter(
-          @Param("userId") UUID userId,
-          @Param("after") LocalDateTime after,
-          Pageable pageable
-  );
-
-  // 4. 아무 필터도 없음
-  @Query("""
-      SELECT n FROM Notification n
-      WHERE n.user.id = :userId
-      ORDER BY n.createdAt DESC
-  """)
-  List<Notification> findByUserId(
-          @Param("userId") UUID userId,
-          Pageable pageable
-  );
+  @Query("SELECT n FROM Notification n WHERE n.user.id = :userId AND (:cursor IS NULL OR n.id < :cursor) AND (:after IS NULL OR n.createdAt < :after) ORDER BY n.createdAt DESC")
+  List<Notification> findByUserWithCursor(@Param("userId") UUID userId,
+                                          @Param("cursor") String cursor,
+                                          @Param("after") LocalDateTime after,
+                                          @Param("limit") int limit);
 
   Optional<Notification> findByIdAndUserId(UUID id, UUID userId);
 

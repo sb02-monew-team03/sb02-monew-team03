@@ -32,21 +32,10 @@ public class NotificationService {
   private final SubscriptionRepository subscriptionRepository;
 
 
-
   @Transactional
   public CursorPageResponseNotificationDto getNotifications(UUID userId, UUID cursor, LocalDateTime after, int limit) {
     Pageable pageable = PageRequest.of(0, limit);
-    List<Notification> notifications;
-
-    if (cursor != null && after != null) {
-      notifications = notificationRepository.findByUserIdAndCursorAndAfter(userId, cursor, after, pageable);
-    } else if (cursor != null) {
-      notifications = notificationRepository.findByUserIdAndCursor(userId, cursor, pageable);
-    } else if (after != null) {
-      notifications = notificationRepository.findByUserIdAndAfter(userId, after, pageable);
-    } else {
-      notifications = notificationRepository.findByUserId(userId, pageable);
-    }
+    List<Notification> notifications = notificationRepository.findByCursorAndAfter(userId, cursor, after, pageable);
 
     List<NotificationDto> content = notifications.stream()
             .map(NotificationDto::from)
