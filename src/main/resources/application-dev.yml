@@ -15,6 +15,9 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type: TRACE
 
+custom:
+  activity-service-strategy: lazy  # 또는 fetch, mongo (실험 시 변경)
+
 naver:
   api:
     client-id: ${NAVER_API_CLIENT_ID}
