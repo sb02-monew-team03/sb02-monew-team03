@@ -1,11 +1,15 @@
+server:
+  port: 8080
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/your_db
-    username: your_user
-    password: your_password
+    url: jdbc:postgresql://localhost:5432/monew
+    username: monew_user
+    password: monew123
   jpa:
-    hibernate:
-      ddl-auto: create  # create/update
+    properties:
+      hibernate:
+        format_sql: true
 
 logging:
   level:
@@ -15,8 +19,13 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type: TRACE
 
-custom:
-  activity-service-strategy: lazy  # 또는 fetch, mongo (실험 시 변경)
+management:
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
 
 naver:
   api:

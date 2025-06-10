@@ -1,11 +1,15 @@
+server:
+  port: 80
+
 spring:
   datasource:
-    url: ${PROD_DB_URL}
-    username: ${PROD_DB_USER}
-    password: ${PROD_DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/monew
+    username: monew_user
+    password: monew123
   jpa:
-    hibernate:
-      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
 
 logging:
   level:
@@ -15,8 +19,13 @@ logging:
     org.hibernate.SQL: OFF
     org.hibernate.type: OFF
 
-custom:
-  activity-service-strategy: lazy  # 또는 fetch, mongo (실험 시 변경)
+management:
+  endpoint:
+    health:
+      show-details: never
+  info:
+    env:
+      enabled: false
 
 naver:
   api:
