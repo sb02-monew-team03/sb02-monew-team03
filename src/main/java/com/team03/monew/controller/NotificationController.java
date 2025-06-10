@@ -23,7 +23,7 @@ public class NotificationController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponseNotificationDto> getNotifications(
-      @RequestHeader(name = "Monew-Request-User-ID") UUID userId,
+      @RequestHeader(name = "Monew-Request-User-ID", required = false) UUID userId,
       @RequestParam(name = "cursor", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
       @RequestParam(name = "after",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
       @RequestParam(name = "limit" , defaultValue = "50") int limit
