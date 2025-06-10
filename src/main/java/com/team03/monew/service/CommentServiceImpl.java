@@ -24,9 +24,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -88,10 +90,18 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentLikeDto commentLikes(UUID commentId, UUID userId) {
+        log.info("[CommentLike] 요청 들어옴 - commentId: {}, userId: {}", commentId, userId);
+
         User user = entityFinder.getUserOrThrow(userId);
         Comment comment = entityFinder.getCommentOrThrow(commentId);
 
-        if (commentLikeRepository.existsByCommentAndUser(comment, user)) {
+        log.debug("[CommentLike] DB 조회된 user.id: {}, comment.id: {}", user.getId(), comment.getId());
+
+        boolean alreadyLiked = commentLikeRepository.existsByCommentAndUser(comment, user);
+        log.debug("[CommentLike] existsByCommentAndUser 결과: {}", alreadyLiked);
+
+        if (alreadyLiked) {
+            log.warn("[CommentLike] 중복 좋아요 시도 감지 - commentId: {}, userId: {}", commentId, userId);
             throw new CustomException(
                     ErrorCode.DUPLICATE_RESOURCE,
                     new ErrorDetail("RELATION", "comment-user", commentId + "/" + userId),
@@ -100,11 +110,17 @@ public class CommentServiceImpl implements CommentService {
         }
 
         CommentLike commentLike = CommentLikesMapper.toCommentLike(comment, user);
+        log.debug("[CommentLike] 새로운 좋아요 객체 생성됨 - commentLikeId: {}", commentLike.getId());
 
         comment.increaseLikeCount();
+        log.debug("[CommentLike] 좋아요 수 증가 - 현재 likeCount: {}", comment.getLikeCount());
 
-        return CommentLikesMapper.toCommentLikeDto(commentLikeRepository.save(commentLike));
+        CommentLike saved = commentLikeRepository.save(commentLike);
+        log.info("[CommentLike] 저장 완료 - commentLikeId: {}, userId: {}, commentId: {}", saved.getId(), userId, commentId);
+
+        return CommentLikesMapper.toCommentLikeDto(saved);
     }
+
 
     @Override
     @Transactional

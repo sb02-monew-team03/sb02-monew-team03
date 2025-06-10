@@ -24,7 +24,7 @@ public class CommentMapper {
                 comment.getUser().getNickname(),
                 comment.getContent(),
                 comment.getLikeCount(),
-                true,
+                false,
                 comment.getCreatedAt()
         );
     }
