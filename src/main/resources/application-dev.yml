@@ -5,7 +5,7 @@ spring:
     password: your_password
   jpa:
     hibernate:
-      ddl-auto: update  # create/update
+      ddl-auto: create  # create/update
 
 logging:
   level:
