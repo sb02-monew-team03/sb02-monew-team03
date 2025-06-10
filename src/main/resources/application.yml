@@ -3,6 +3,11 @@ spring:
         name: monew
     profiles:
         active: dev
+    batch:
+        jdbc:
+            initialize-schema: always
+        job:
+            enabled: false  # 자동 실행 방지
 
     jpa:
         properties:
