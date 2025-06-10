@@ -14,6 +14,7 @@ import com.team03.monew.repository.NotificationRepository;
 import com.team03.monew.repository.SubscriptionRepository;
 import com.team03.monew.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,17 @@ public class NotificationService {
   @Transactional
   public CursorPageResponseNotificationDto getNotifications(UUID userId, UUID cursor, LocalDateTime after, int limit) {
     Pageable pageable = PageRequest.of(0, limit);
-    List<Notification> notifications = notificationRepository.findByCursorAndAfter(userId, cursor, after, pageable);
+    List<Notification> notifications;
+
+    if (cursor != null && after != null) {
+      notifications =  notificationRepository.findByUserIdAndIdLessThanAndCreatedAtLessThanOrderByCreatedAtDesc(userId, cursor, after, pageable);
+    } else if (cursor != null) {
+      notifications = notificationRepository.findByUserIdAndIdLessThanOrderByCreatedAtDesc(userId, cursor, pageable);
+    } else if (after != null) {
+      notifications = notificationRepository.findByUserIdAndCreatedAtLessThanOrderByCreatedAtDesc(userId, after, pageable);
+    } else {
+      notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+    }
 
     List<NotificationDto> content = notifications.stream()
             .map(NotificationDto::from)

@@ -1,5 +1,6 @@
 package com.team03.monew.repository;
 
+import com.team03.monew.dto.notification.CursorPageResponseNotificationDto;
 import com.team03.monew.entity.Notification;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,19 +14,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
 
-  @Query("""
-        SELECT n FROM Notification n
-        WHERE n.user.id = :userId
-        AND (:cursor IS NULL OR n.id < :cursor)
-        AND (:after IS NULL OR n.createdAt < :after)
-        ORDER BY n.createdAt DESC
-    """)
-  List<Notification> findByCursorAndAfter(
-          @Param("userId") UUID userId,
-          @Param("cursor") UUID cursor,
-          @Param("after") LocalDateTime after,
-          Pageable pageable
-  );
 
   @Query("SELECT n FROM Notification n WHERE n.user.id = :userId AND (:cursor IS NULL OR n.id < :cursor) AND (:after IS NULL OR n.createdAt < :after) ORDER BY n.createdAt DESC")
   List<Notification> findByUserWithCursor(@Param("userId") UUID userId,
@@ -42,4 +30,14 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
   void deleteByCheckedIsTrueAndUpdatedAtBefore(LocalDateTime dateTime);
 
   long countByUserId(UUID userId);
+
+  List<Notification> findByUserIdAndIdLessThanAndCreatedAtLessThanOrderByCreatedAtDesc(
+      UUID userId, UUID cursor,
+      LocalDateTime after, Pageable pageable);
+
+  List<Notification> findByUserIdAndIdLessThanOrderByCreatedAtDesc(UUID userId, UUID cursor, Pageable pageable);
+
+  List<Notification> findByUserIdAndCreatedAtLessThanOrderByCreatedAtDesc(UUID userId, LocalDateTime after, Pageable pageable);
+
+  List<Notification> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 }
