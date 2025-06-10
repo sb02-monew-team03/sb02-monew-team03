@@ -42,3 +42,4 @@ Dockerfile
 docker-compose.yml
 logs/
 discodeit.env
+.env
