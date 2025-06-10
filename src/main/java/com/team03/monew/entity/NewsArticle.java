@@ -29,7 +29,7 @@ public class NewsArticle {
   @Column(nullable = false)
   private String source;
 
-  @Column(columnDefinition = "text", nullable = false, unique = true)
+  @Column(length = 2000, nullable = false, unique = true)
   private String originalLink;
 
   @Column(nullable = false)
@@ -38,6 +38,7 @@ public class NewsArticle {
   @Column(nullable = false)
   private LocalDateTime date;
 
+  @Column(length = 2000)
   private String summary;
 
   @ManyToMany

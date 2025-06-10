@@ -1,16 +1,63 @@
 spring:
     application:
         name: monew
-    profiles:
-        active: dev
+    servlet:
+        multipart:
+            maxFileSize: 10MB # 파일 하나의 최대 크기
+            maxRequestSize: 30MB  # 한 번에 최대 업로드 가능 용량
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/monew
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
 
     jpa:
         properties:
             hibernate:
+                ddl-auto: create # create/update
                 format_sql: true
                 dialect: org.hibernate.dialect.PostgreSQLDialect
+                open-in-view: false
+    profiles:
+        active:
+            - prod
 
-task:
-    scheduling:
-        pool:
-            size: 1
+management:
+    endpoints:
+        web:
+            exposure:
+                include: health,info,metrics,loggers
+    endpoint:
+        health:
+            show-details: always
+
+info:
+    name: Monew
+    version: 1.7.0
+    java:
+        version: 17
+    spring-boot:
+        version: 3.4.0
+    config:
+        datasource:
+            url: ${spring.datasource.url}
+            driver-class-name: ${spring.datasource.driver-class-name}
+        jpa:
+            ddl-auto: ${spring.jpa.hibernate.ddl-auto}
+        storage:
+            type: ${monew.storage.type}
+            path: ${monew.storage.local.root-path}
+        multipart:
+            max-file-size: ${spring.servlet.multipart.maxFileSize}
+            max-request-size: ${spring.servlet.multipart.maxRequestSize}
+
+monew:
+    storage:
+        type: ${STORAGE_TYPE:local}
+        local:
+            root-path: ${STORAGE_LOCAL_ROOT_PATH:.monew/storage}
+
+
+
+custom:
+    activity-service-strategy: lazy  # 또는 fetch, mongo (실험 시 변경)
