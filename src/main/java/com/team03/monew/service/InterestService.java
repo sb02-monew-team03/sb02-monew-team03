@@ -35,6 +35,7 @@ public class InterestService {
   private final SubscriptionRepository subscriptionRepository;
   private final UserRepository userRepository;
 
+  @Transactional
   public InterestDto registerInterest(InterestRegisterRequest request) {
     String newName = request.name();
 
