@@ -92,6 +92,11 @@ public class NaverApiCollector {
                 if (item == null)
                     continue; // 예외 케이스 방지
 
+                // 제목이나 설명에 키워드가 포함되어 있는지 확인
+                if (!newsArticleService.containsKeyword(item.getTitle(), item.getDescription())) {
+                    continue; // 키워드가 포함되어 있지 않으면 저장하지 않음
+                }
+
                 NewsArticleRequestDto dto = item.toDto(new ArrayList<>(interestIds));
                 newsArticleService.saveIfNotExists(dto);
             }
