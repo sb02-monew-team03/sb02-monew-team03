@@ -36,7 +36,7 @@ public class NewsArticleController {
 
     @PostMapping("/{articleId}/article-views")
     public ResponseEntity<ArticleViewDto> saveArticleView(
-        @PathVariable UUID articleId,
+        @PathVariable(name = "articleId") UUID articleId,
         @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         ArticleViewDto dto = newsArticleService.saveArticleView(articleId, userId);
@@ -45,18 +45,21 @@ public class NewsArticleController {
 
     @GetMapping
     public ResponseEntity<CursorPageResponseArticleDto> getArticles(
-        @RequestParam(required = false) String keyword,
-        @RequestParam(required = false) UUID interestId,
-        @RequestParam(required = false) List<String> sourceIn,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime publishDateFrom,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime publishDateTo,
-        @RequestParam String orderBy,
-        @RequestParam String direction,
-        @RequestParam(required = false) String cursor,
-        @RequestParam(required = false) String after,
-        @RequestParam(defaultValue = "50") Integer limit,
-        @RequestHeader("Monew-Request-User-ID") UUID requestUserId
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "interestId", required = false) UUID interestId,
+            @RequestParam(name = "sourceIn", required = false) List<String> sourceIn,
+            @RequestParam(name = "publishDateFrom", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime publishDateFrom,
+            @RequestParam(name = "publishDateTo", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime publishDateTo,
+            @RequestParam(name = "orderBy") String orderBy,
+            @RequestParam(name = "direction") String direction,
+            @RequestParam(name = "cursor", required = false) String cursor,
+            @RequestParam(name = "after", required = false) String after,
+            @RequestParam(name = "limit", defaultValue = "50") Integer limit,
+            @RequestHeader(name = "Monew-Request-User-ID") UUID requestUserId
     ){
+
         validateOrderBy(orderBy);
         validateDirection(direction);
 
@@ -67,27 +70,28 @@ public class NewsArticleController {
         return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/sources")
     public ResponseEntity<List<String>> getSources() {
         return ResponseEntity.ok(newsArticleService.getSources());
     }
 
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<Void> deleteArticleLogical(@PathVariable UUID articleId) {
+    public ResponseEntity<Void> deleteArticleLogical(@PathVariable(name = "articleId") UUID articleId) {
         newsArticleService.deleteLogically(articleId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{articleId}/hard")
-    public ResponseEntity<Void> deleteArticleHard(@PathVariable UUID articleId) {
+    public ResponseEntity<Void> deleteArticleHard(@PathVariable(name = "articleId") UUID articleId) {
         newsArticleService.deletePhysically(articleId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/restore")
     public ResponseEntity<List<ArticleRestoreResultDto>> restoreArticles(
-        @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-        @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        @RequestParam(name = "from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+        @RequestParam(name = "to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
 
         List<ArticleRestoreResultDto> results = newsRestoreService.restore(from, to);
         return ResponseEntity.ok(results);

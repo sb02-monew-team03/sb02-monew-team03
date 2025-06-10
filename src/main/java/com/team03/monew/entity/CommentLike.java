@@ -29,6 +29,7 @@ public class CommentLike extends BaseTimeEntity {
 
     @Builder
     public CommentLike(Comment comment, User user, boolean likedByMe) {
+        this.id = UUID.randomUUID();
         this.comment = comment;
         this.user = user;
         this.likedByMe = likedByMe;
@@ -37,6 +38,5 @@ public class CommentLike extends BaseTimeEntity {
     public void setComment(Comment comment) {
         this.comment = comment;
     }
-
 
 }

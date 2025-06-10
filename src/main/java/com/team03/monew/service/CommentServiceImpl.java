@@ -100,7 +100,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         CommentLike commentLike = CommentLikesMapper.toCommentLike(comment, user);
-        comment.addCommentLike(commentLike);  // 연관관계 메서드
+
         comment.increaseLikeCount();
 
         return CommentLikesMapper.toCommentLikeDto(commentLikeRepository.save(commentLike));

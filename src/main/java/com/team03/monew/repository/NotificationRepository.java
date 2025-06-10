@@ -21,17 +21,17 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
         ORDER BY n.createdAt DESC
     """)
   List<Notification> findByCursorAndAfter(
-      @Param("userId") UUID userId,
-      @Param("cursor") UUID cursor,
-      @Param("after") LocalDateTime after,
-      Pageable pageable
+          @Param("userId") UUID userId,
+          @Param("cursor") UUID cursor,
+          @Param("after") LocalDateTime after,
+          Pageable pageable
   );
 
   @Query("SELECT n FROM Notification n WHERE n.user.id = :userId AND (:cursor IS NULL OR n.id < :cursor) AND (:after IS NULL OR n.createdAt < :after) ORDER BY n.createdAt DESC")
   List<Notification> findByUserWithCursor(@Param("userId") UUID userId,
-      @Param("cursor") String cursor,
-      @Param("after") LocalDateTime after,
-      @Param("limit") int limit);
+                                          @Param("cursor") String cursor,
+                                          @Param("after") LocalDateTime after,
+                                          @Param("limit") int limit);
 
   Optional<Notification> findByIdAndUserId(UUID id, UUID userId);
 

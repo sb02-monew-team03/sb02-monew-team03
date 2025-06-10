@@ -61,7 +61,7 @@ public class CommentController {
     }
 
     @PostMapping("/{commentId}/comment-likes")
-    public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable UUID commentId,  @RequestHeader("Monew-Request-User-ID") UUID userId) {
+    public ResponseEntity<CommentLikeDto> addCommentLike(@PathVariable(name = "commentId") UUID commentId,  @RequestHeader(name = "Monew-Request-User-ID") UUID userId) {
         CommentLikeDto commentLikeDto = commentService.commentLikes(commentId, userId);
         notificationService.notifyCommentLiked(userId,commentId);
 
@@ -69,14 +69,14 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}/comment-likes")
-    public ResponseEntity<Void> cancelCommentLike(@PathVariable UUID commentId,  @RequestHeader("Monew-Request-User-ID") UUID userId) {
+    public ResponseEntity<Void> cancelCommentLike(@PathVariable(name = "commentId") UUID commentId,  @RequestHeader("Monew-Request-User-ID") UUID userId) {
         commentService.cancelCommentLike(commentId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> softDeleteComment(
-            @PathVariable UUID commentId,
+            @PathVariable(name = "commentId") UUID commentId,
             @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         commentService.softDeleteComment(commentId, userId);
@@ -85,7 +85,7 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}/hard")
     public ResponseEntity<Void> hardDeleteComment(
-            @PathVariable UUID commentId,
+            @PathVariable(name = "commentId") UUID commentId,
             @RequestHeader("Monew-Request-User-ID") UUID userId
     ) {
         commentService.hardDeleteComment(commentId, userId);
@@ -94,7 +94,7 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentDto> updateComment(
-            @PathVariable UUID commentId,
+            @PathVariable(name = "commentdId") UUID commentId,
             @RequestHeader(name = "Monew-Request-User-ID") UUID userId,
             @Valid @RequestBody CommentUpdateRequest request
     ) {

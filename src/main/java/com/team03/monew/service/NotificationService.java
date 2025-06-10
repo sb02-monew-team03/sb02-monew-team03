@@ -32,15 +32,14 @@ public class NotificationService {
   private final SubscriptionRepository subscriptionRepository;
 
 
-
   @Transactional
   public CursorPageResponseNotificationDto getNotifications(UUID userId, UUID cursor, LocalDateTime after, int limit) {
     Pageable pageable = PageRequest.of(0, limit);
     List<Notification> notifications = notificationRepository.findByCursorAndAfter(userId, cursor, after, pageable);
 
     List<NotificationDto> content = notifications.stream()
-        .map(NotificationDto::from)
-        .toList();
+            .map(NotificationDto::from)
+            .toList();
 
     boolean hasNext = content.size() == limit;
     String nextCursor = hasNext ? content.get(content.size() - 1).id().toString() : null;
@@ -48,9 +47,10 @@ public class NotificationService {
     long totalElements = notificationRepository.countByUserId(userId);
 
     return new CursorPageResponseNotificationDto(
-        content, nextCursor, nextAfter, limit, totalElements, hasNext
+            content, nextCursor, nextAfter, limit, totalElements, hasNext
     );
   }
+
 
   @Transactional
   public void confirmAll(UUID userId) {

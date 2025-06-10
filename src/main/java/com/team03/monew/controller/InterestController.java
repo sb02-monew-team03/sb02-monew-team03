@@ -41,52 +41,54 @@ public class InterestController {
 
   @PatchMapping("/{id}")
   public ResponseEntity<Void> updateInterestKeywords(
-      @PathVariable UUID id,
+      @PathVariable(name = "id") UUID id,
       @RequestBody @Valid InterestUpdateRequest request
   ) {
     interestService.updateKeywords(id, request.keywords());
     return ResponseEntity.noContent().build();
   }
 
-
   @GetMapping
   public ResponseEntity<CursorPageResponseInterestDto> searchInterests(
-      @RequestHeader("Monew-Request-User-ID") UUID userId,
-      @RequestParam(required = false) String keyword,
-      @RequestParam String orderBy,
-      @RequestParam String direction,
-      @RequestParam(required = false) String cursor,
-      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
-      @RequestParam int limit
+          @RequestHeader(name = "Monew-Request-User-ID") UUID userId,
+          @RequestParam(name = "keyword", required = false) String keyword,
+          @RequestParam(name = "orderBy") String orderBy,
+          @RequestParam(name = "direction") String direction,
+          @RequestParam(name = "cursor", required = false) String cursor,
+          @RequestParam(name = "after", required = false)
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
+          @RequestParam(name = "limit") int limit
   ) {
     CursorPageResponseInterestDto result = interestService.searchInterests(
-        userId, keyword, orderBy, direction, cursor, after, limit
+            userId, keyword, orderBy, direction, cursor, after, limit
     ).orElseThrow();
     return ResponseEntity.ok(result);
   }
 
   @PostMapping("/{interestId}/subscriptions")
   public ResponseEntity<SubscriptionDto> subscribe(
-      @PathVariable UUID interestId,
-      @RequestHeader("Monew-Request-User-ID") UUID userId
+          @PathVariable(name = "interestId") UUID interestId,
+          @RequestHeader(name = "Monew-Request-User-ID") UUID userId
   ) {
     SubscriptionDto dto = interestService.subscribe(interestId, userId);
-
     return ResponseEntity.ok(dto);
   }
 
   @DeleteMapping("/{interestId}/subscriptions")
   public ResponseEntity<Void> unsubscribe(
-      @PathVariable UUID interestId,
-      @RequestHeader("Monew-Request-User-ID") UUID userId
+          @PathVariable(name = "interestId") UUID interestId,
+          @RequestHeader(name = "Monew-Request-User-ID") UUID userId
   ) {
     interestService.unsubscribe(interestId, userId);
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/{interestId}")
-  public ResponseEntity<Void> deleteInterest(@PathVariable UUID interestId) {
+  public ResponseEntity<Void> deleteInterest(
+          @PathVariable(name = "interestId") UUID interestId
+  ) {
     interestService.delete(interestId);
     return ResponseEntity.noContent().build();
   }
+
 }
