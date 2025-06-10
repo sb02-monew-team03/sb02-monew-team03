@@ -76,7 +76,7 @@ public class InterestService {
     // 변경 감지로 자동 저장 (save 호출 안 해도 됨)
     interestRepository.save(interest); // 선택적
   }
-  public Optional<CursorPageResponseInterestDto>  searchInterests(
+  public Optional<CursorPageResponseInterestDto> searchInterests(
       UUID userId,
       String keyword,
       String orderBy,
@@ -101,6 +101,7 @@ public class InterestService {
       return SubsciptionMapper.from(subscrip);// 이미 구독 중이면 그대로 반환
     }
 
+    increaseSubscriberCount(interest);
     Subscription subscription =  subscriptionRepository.save(
         Subscription.builder()
             .user(userRepository.findByIdAndDeletedFalse(userId).orElseThrow((
@@ -110,7 +111,7 @@ public class InterestService {
             .interest(interest)
             .build()
     );
-    increaseSubscriberCount(interest);
+
 
     SubscriptionDto subscriptionDto = SubsciptionMapper.from(subscription);
     return subscriptionDto;

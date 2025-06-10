@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,5 +37,6 @@ public class Subscription extends BaseTimeEntity {
     public Subscription(User user, Interest interest) {
         this.user = user;
         this.interest = interest;
+        user.getSubscriptions().add(this); //구독 내용 추가
     }
 }

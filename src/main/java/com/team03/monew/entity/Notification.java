@@ -26,12 +26,13 @@ import lombok.Setter;
 public class Notification extends BaseTimeEntity{
 
   @Builder
-  public Notification(User user, String content, ResourceType relatedType, UUID relatedId) {
+  public Notification(User user, String content, ResourceType relatedType, UUID relatedId,
+      boolean checked) {
     this.user = user;
     this.content = content;
     this.relatedType = relatedType;
     this.relatedId = relatedId;
-    this.checked = false;
+    this.checked = checked;
   }
 
 
