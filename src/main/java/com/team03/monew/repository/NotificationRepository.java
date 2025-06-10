@@ -17,7 +17,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
   @Query("SELECT n FROM Notification n WHERE n.user.id = :userId AND (:cursor IS NULL OR n.id < :cursor) AND (:after IS NULL OR n.createdAt < :after) ORDER BY n.createdAt DESC")
   List<Notification> findByUserWithCursor(@Param("userId") UUID userId,
-                                          @Param("cursor") String cursor,
+                                          @Param("cursor") LocalDateTime cursor,
                                           @Param("after") LocalDateTime after,
                                           @Param("limit") int limit);
 
@@ -31,13 +31,50 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
   long countByUserId(UUID userId);
 
-  List<Notification> findByUserIdAndIdLessThanAndCreatedAtLessThanOrderByCreatedAtDesc(
-      UUID userId, UUID cursor,
-      LocalDateTime after, Pageable pageable);
+  @Query("""
+    SELECT n FROM Notification n
+    WHERE n.user.id = :userId
+      AND n.createdAt < :cursor
+      AND n.createdAt < :after
+    ORDER BY n.createdAt DESC
+""")
+  List<Notification> findByUserIdAndCursorAndAfter(
+      @Param("userId") UUID userId,
+      @Param("cursor") LocalDateTime cursor,
+      @Param("after") LocalDateTime after,
+      Pageable pageable);
 
-  List<Notification> findByUserIdAndIdLessThanOrderByCreatedAtDesc(UUID userId, UUID cursor, Pageable pageable);
+  // cursor만 존재할 때
+  @Query("""
+    SELECT n FROM Notification n
+    WHERE n.user.id = :userId
+      AND n.createdAt < :cursor
+    ORDER BY n.createdAt DESC
+""")
+  List<Notification> findByUserIdAndCursor(
+      @Param("userId") UUID userId,
+      @Param("cursor") LocalDateTime cursor,
+      Pageable pageable);
 
-  List<Notification> findByUserIdAndCreatedAtLessThanOrderByCreatedAtDesc(UUID userId, LocalDateTime after, Pageable pageable);
+  // after만 존재할 때
+  @Query("""
+    SELECT n FROM Notification n
+    WHERE n.user.id = :userId
+      AND n.createdAt < :after
+    ORDER BY n.createdAt DESC
+""")
+  List<Notification> findByUserIdAndAfter(
+      @Param("userId") UUID userId,
+      @Param("after") LocalDateTime after,
+      Pageable pageable);
 
-  List<Notification> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
+  // 아무 조건도 없을 때
+  @Query("""
+    SELECT n FROM Notification n
+    WHERE n.user.id = :userId
+    ORDER BY n.createdAt DESC
+""")
+  List<Notification> findByUserIdOnly(
+      @Param("userId") UUID userId,
+      Pageable pageable);
 }

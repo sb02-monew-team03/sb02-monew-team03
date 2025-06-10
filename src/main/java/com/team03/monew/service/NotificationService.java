@@ -9,17 +9,13 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
-import com.team03.monew.repository.InterestRepository;
 import com.team03.monew.repository.NotificationRepository;
 import com.team03.monew.repository.SubscriptionRepository;
 import com.team03.monew.repository.UserRepository;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,19 +30,20 @@ public class NotificationService {
 
 
   @Transactional
-  public CursorPageResponseNotificationDto getNotifications(UUID userId, UUID cursor, LocalDateTime after, int limit) {
+  public CursorPageResponseNotificationDto getNotifications(UUID userId, LocalDateTime cursor, LocalDateTime after, int limit) {
     Pageable pageable = PageRequest.of(0, limit);
     List<Notification> notifications;
 
     if (cursor != null && after != null) {
-      notifications =  notificationRepository.findByUserIdAndIdLessThanAndCreatedAtLessThanOrderByCreatedAtDesc(userId, cursor, after, pageable);
+      notifications = notificationRepository.findByUserIdAndCursorAndAfter(userId, cursor, after, pageable);
     } else if (cursor != null) {
-      notifications = notificationRepository.findByUserIdAndIdLessThanOrderByCreatedAtDesc(userId, cursor, pageable);
+      notifications = notificationRepository.findByUserIdAndCursor(userId, cursor, pageable);
     } else if (after != null) {
-      notifications = notificationRepository.findByUserIdAndCreatedAtLessThanOrderByCreatedAtDesc(userId, after, pageable);
+      notifications = notificationRepository.findByUserIdAndAfter(userId, after, pageable);
     } else {
-      notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+      notifications = notificationRepository.findByUserIdOnly(userId, pageable);
     }
+
 
     List<NotificationDto> content = notifications.stream()
             .map(NotificationDto::from)
