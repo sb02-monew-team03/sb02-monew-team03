@@ -75,7 +75,8 @@ dependencies {
     // AWS S3 SDK 의존성
     implementation 'software.amazon.awssdk:s3:2.31.7'
 
-
+    // 배치 사용을 위한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
 }
 
 tasks.named('test') {

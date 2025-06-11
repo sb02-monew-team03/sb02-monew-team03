@@ -1,12 +1,12 @@
 package com.team03.monew.service.news;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.monew.dto.newsArticle.mapper.ArticleViewMapper;
 import com.team03.monew.dto.newsArticle.mapper.NewsArticleMapper;
 import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
 import com.team03.monew.dto.newsArticle.response.ArticleDto;
 import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
 import com.team03.monew.dto.newsArticle.response.CursorPageResponseArticleDto;
+import com.team03.monew.dto.newsArticle.response.NaverResponseDto;
 import com.team03.monew.entity.ArticleView;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.entity.NewsArticle;
@@ -15,21 +15,40 @@ import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
+import com.team03.monew.external.naver.NaverNewsItem;
 import com.team03.monew.repository.ArticleViewRepository;
 import com.team03.monew.repository.InterestRepository;
 import com.team03.monew.repository.NewsArticleRepository;
 import com.team03.monew.repository.UserRepository;
+import com.team03.monew.service.InterestService;
+import com.team03.monew.util.RSSUtils;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +58,17 @@ public class NewsArticleService {
     private final ArticleViewRepository articleViewRepository;
     private final InterestRepository interestRepository;
     private final UserRepository userRepository;
-    private final JPAQueryFactory queryFactory;
+    private final RSSUtils rssUtils;
+    private final InterestService interestService;
 
     @Value("${aws.s3.bucket}")
     private String bucket;
+
+    @Value("${naver.api.client-id}")
+    private String clientId;
+
+    @Value("${naver.api.client-secret}")
+    private String clientSecret;
 
     @Transactional
     public ArticleViewDto saveArticleView(UUID articleId, UUID userId) {
@@ -145,7 +171,6 @@ public class NewsArticleService {
             .flatMap(interest -> interest.getKeywords().stream())
             .distinct()
             .collect(Collectors.toList());
-        // List<String> keywords = interestRepository.findAllKeywords(); // "AI", "정치", "게임" 등
         return keywords.stream().anyMatch(k -> title.contains(k) || desc.contains(k));
     }
 
@@ -177,5 +202,155 @@ public class NewsArticleService {
             lastArticle.publishDate().toString().getBytes(StandardCharsets.UTF_8)
         );
     }
+
+
+    // 네이버 api에서 뉴스 기사 받아오기
+    @Transactional(readOnly = true)
+    public List<NewsArticleRequestDto> collectFromNaver() {
+        List<Interest> interests = interestRepository.findAllWithKeywords();
+        Map<String, NaverNewsItem> itemMap = new HashMap<>();
+        Map<String, Set<UUID>> articleInterestMap = new HashMap<>();
+
+        for (Interest interest : interests) {
+            for (String keyword : interest.getKeywords()) {
+                try {
+                    String encoded = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+                    String url = "https://openapi.naver.com/v1/search/news.json?query=" + encoded
+                        + "&display=10&sort=date";
+
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.set("X-Naver-Client-Id", clientId);  // 필드 주입 or @Value 필요
+                    headers.set("X-Naver-Client-Secret", clientSecret);
+
+                    HttpEntity<Void> request = new HttpEntity<>(headers);
+                    ResponseEntity<NaverResponseDto> response = new RestTemplate().exchange(
+                        url, HttpMethod.GET, request, NaverResponseDto.class);
+
+                    List<NaverNewsItem> items = response.getBody().getItems();
+
+                    for (NaverNewsItem item : items) {
+                        String link = item.getLink();
+
+                        itemMap.putIfAbsent(link, item);
+                        articleInterestMap
+                            .computeIfAbsent(link, k -> new HashSet<>())
+                            .add(interest.getId());
+                    }
+                } catch (Exception e) {
+                    System.err.println("네이버 뉴스 수집 실패: " + keyword);
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // 결과 리스트 구성
+        List<NewsArticleRequestDto> result = new ArrayList<>();
+        for (Map.Entry<String, Set<UUID>> entry : articleInterestMap.entrySet()) {
+            String link = entry.getKey();
+            Set<UUID> interestIds = entry.getValue();
+
+            NaverNewsItem item = itemMap.get(link);
+            if (item == null) continue;
+
+            if (!containsKeyword(item.getTitle(), item.getDescription())) continue;
+
+            result.add(item.toDto(new ArrayList<>(interestIds)));
+        }
+
+        return result;
+    }
+
+    // 여러 RSS에서 뉴스 기사 받아오기
+    @Transactional(readOnly = true)
+    public List<NewsArticleRequestDto> collectFromRss() {
+        Map<Interest, List<String>> interestKeywordMap = interestService.getInterestKeywordMap();
+
+        Map<String, String> sources = Map.of(
+            "https://www.hankyung.com/feed/all-news", "한국경제",
+            "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml", "조선일보",
+            "http://www.yonhapnewstv.co.kr/category/news/headline/feed/", "연합뉴스TV"
+        );
+
+        List<NewsArticleRequestDto> result = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : sources.entrySet()) {
+            String rssUrl = entry.getKey();
+            String source = entry.getValue();
+
+            try {
+                Document doc = Jsoup.connect(rssUrl).get();
+                Elements items = doc.select("item");
+
+                for (Element item : items) {
+                    String title = item.selectFirst("title").text();
+                    String link = item.selectFirst("link").text();
+                    String pubDate = item.selectFirst("pubDate").text();
+                    LocalDateTime date = rssUtils.parseRfc822(pubDate);
+
+                    // 요약 추출
+                    String summary = rssUtils.extractSummary(item, title);
+
+                    // 키워드 매칭된 관심사 추출
+                    List<UUID> matchedInterestIds = interestKeywordMap.entrySet().stream()
+                        .filter(e -> e.getValue().stream().anyMatch(k -> title.contains(k) || summary.contains(k)))
+                        .map(e -> e.getKey().getId())
+                        .distinct()
+                        .toList();
+
+                    if (!matchedInterestIds.isEmpty()) {
+                        result.add(new NewsArticleRequestDto(
+                            title,
+                            link,
+                            summary,
+                            date,
+                            source,
+                            matchedInterestIds
+                        ));
+                    }
+                }
+
+            } catch (IOException e) {
+                System.err.println("RSS 수집 실패: " + rssUrl);
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+
+//        for (Map.Entry<String, String> entry : sources.entrySet()) {
+//            try {
+//                Document doc = Jsoup.connect(entry.getKey()).get();
+//                Elements items = doc.select("item");
+//
+//                for (Element item : items) {
+//                    String title = item.selectFirst("title").text();
+//                    String link = item.selectFirst("link").text();
+//                    String pubDate = item.selectFirst("pubDate").text();
+//                    Element descriptionEl = item.selectFirst("description");
+//                    String summary = descriptionEl != null ? descriptionEl.text() : "";
+////                    String summary = rssUtils.cleanSummary(rawSummary);
+//                    LocalDateTime date = rssUtils.parseRfc822(pubDate);
+//
+//                    List<UUID> matchedInterestIds = interestKeywordMap.entrySet().stream()
+//                        .filter(e -> e.getValue().stream().anyMatch(k -> title.contains(k) || summary.contains(k)))
+//                        .map(e -> e.getKey().getId())
+//                        .distinct()
+//                        .toList();
+//
+//                    if (!matchedInterestIds.isEmpty()) {
+//                        result.add(new NewsArticleRequestDto(title, link, summary, date, entry.getValue(), matchedInterestIds));
+//                    }
+//                }
+//            } catch (Exception e) {
+//                System.err.println("RSS 수집 실패: " + entry.getKey());
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return result;
+//    }
+
+
 
 }
