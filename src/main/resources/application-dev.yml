@@ -1,31 +1,22 @@
-server:
-  port: 8080
-
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/monew
-    username: monew_user
-    password: monew123
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
-    properties:
-      hibernate:
-        format_sql: true
+    hibernate:
+      ddl-auto: create  # 개발 환경이므로 create
 
 logging:
   level:
     root: INFO
-    com.myapp: DEBUG
+    com.monew: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type: TRACE
 
-management:
-  endpoint:
-    health:
-      show-details: always
-  info:
-    env:
-      enabled: true
+custom:
+  activity-service-strategy: lazy  # 또는 fetch, mongo 등 테스트용
 
 naver:
   api:
