@@ -126,8 +126,8 @@ public class InterestService {
 
     subscriptionRepository.findByUserAndInterest(userId, interestId)
         .ifPresent(subscription -> {
-          subscriptionRepository.delete(subscription);
           decreaseSubscriberCount(interest);
+          subscriptionRepository.delete(subscription);
         });
   }
 
