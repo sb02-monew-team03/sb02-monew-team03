@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -49,6 +50,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NewsArticleService {
@@ -235,8 +237,7 @@ public class NewsArticleService {
                             .add(interest.getId());
                     }
                 } catch (Exception e) {
-                    System.err.println("네이버 뉴스 수집 실패: " + keyword);
-                    e.printStackTrace();
+                    log.error("[Naver API뉴스 수집 실패] keyword={}, message={}", keyword, e.getMessage(), e);
                 }
             }
         }
@@ -306,8 +307,7 @@ public class NewsArticleService {
                 }
 
             } catch (IOException e) {
-                System.err.println("RSS 수집 실패: " + rssUrl);
-                e.printStackTrace();
+                log.error("[RSS 뉴스 수집 실패] rssUrl={}, message={}", rssUrl, e.getMessage(), e);
             }
         }
 
