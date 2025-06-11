@@ -32,9 +32,11 @@ public class Interest extends BaseTimeEntity {
   private String name;
 
   @ElementCollection
+  @Builder.Default
   private List<String> keywords = new ArrayList<>();
 
   @Column(nullable = false)
+  @Builder.Default
   private int subscriberCount = 0;
 
 }
