@@ -23,7 +23,6 @@ import com.team03.monew.repository.UserRepository;
 import com.team03.monew.service.InterestService;
 import com.team03.monew.util.RSSUtils;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -214,9 +213,8 @@ public class NewsArticleService {
         for (Interest interest : interests) {
             for (String keyword : interest.getKeywords()) {
                 try {
-                    String encoded = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-                    String url = "https://openapi.naver.com/v1/search/news.json?query=" + encoded
-                        + "&display=10&sort=date";
+                    String url = "https://openapi.naver.com/v1/search/news.json?query=" + keyword
+                        + "&display=100&sort=date"; // 네이버 뉴스 API 기본 응답은 10개, 최대 100개
 
                     HttpHeaders headers = new HttpHeaders();
                     headers.set("X-Naver-Client-Id", clientId);  // 필드 주입 or @Value 필요
@@ -251,8 +249,6 @@ public class NewsArticleService {
 
             NaverNewsItem item = itemMap.get(link);
             if (item == null) continue;
-
-            if (!containsKeyword(item.getTitle(), item.getDescription())) continue;
 
             result.add(item.toDto(new ArrayList<>(interestIds)));
         }
@@ -317,40 +313,5 @@ public class NewsArticleService {
 
         return result;
     }
-
-//        for (Map.Entry<String, String> entry : sources.entrySet()) {
-//            try {
-//                Document doc = Jsoup.connect(entry.getKey()).get();
-//                Elements items = doc.select("item");
-//
-//                for (Element item : items) {
-//                    String title = item.selectFirst("title").text();
-//                    String link = item.selectFirst("link").text();
-//                    String pubDate = item.selectFirst("pubDate").text();
-//                    Element descriptionEl = item.selectFirst("description");
-//                    String summary = descriptionEl != null ? descriptionEl.text() : "";
-////                    String summary = rssUtils.cleanSummary(rawSummary);
-//                    LocalDateTime date = rssUtils.parseRfc822(pubDate);
-//
-//                    List<UUID> matchedInterestIds = interestKeywordMap.entrySet().stream()
-//                        .filter(e -> e.getValue().stream().anyMatch(k -> title.contains(k) || summary.contains(k)))
-//                        .map(e -> e.getKey().getId())
-//                        .distinct()
-//                        .toList();
-//
-//                    if (!matchedInterestIds.isEmpty()) {
-//                        result.add(new NewsArticleRequestDto(title, link, summary, date, entry.getValue(), matchedInterestIds));
-//                    }
-//                }
-//            } catch (Exception e) {
-//                System.err.println("RSS 수집 실패: " + entry.getKey());
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return result;
-//    }
-
-
 
 }
