@@ -1,22 +1,22 @@
 spring:
   datasource:
-    url: ${PROD_DB_URL}
-    username: ${PROD_DB_USER}
-    password: ${PROD_DB_PASSWORD}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: validate  # 운영에서는 validate로 안전하게
 
 logging:
   level:
     root: WARN
-    com.myapp: INFO
+    com.monew: INFO
     org.springframework: WARN
     org.hibernate.SQL: OFF
     org.hibernate.type: OFF
 
 custom:
-  activity-service-strategy: lazy  # 또는 fetch, mongo (실험 시 변경)
+  activity-service-strategy: lazy  # 기본 전략
 
 naver:
   api:
