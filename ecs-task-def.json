@@ -1,18 +1,26 @@
 {
   "family": "monew-task",
+  "networkMode": "bridge",
   "containerDefinitions": [
     {
       "name": "monew-app",
       "image": "public.ecr.aws/b3n5q7g3/monew:latest",
       "cpu": 256,
       "memory": 512,
-      "essential": true,
       "portMappings": [
         {
           "containerPort": 8080,
-          "hostPort": 80
+          "hostPort": 80,
+          "protocol": "tcp"
         }
-      ]
+      ],
+      "essential": true,
+      "environment": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "systemControls": []
     }
-  ]
+  ],
+  "volumes": [],
+  "placementConstraints": []
 }
