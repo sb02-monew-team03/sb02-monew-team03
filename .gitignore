@@ -42,5 +42,5 @@ out/
 Dockerfile
 docker-compose.yml
 logs/
-discodeit.env
+monew.env
 .env
