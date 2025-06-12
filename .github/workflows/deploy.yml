@@ -1,0 +1,26 @@
+name: CD - Deploy to AWS
+
+on:
+  push:
+    branches: [ release ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.ECR_REPO }} .
+          docker tag ${{ secrets.ECR_REPO }}:latest ${{ secrets.ECR_URI }}
+          docker push ${{ secrets.ECR_URI }}
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ecs-task-def.json
+          service: your-ecs-service
+          cluster: your-cluster
+          wait-for-service-stability: true
