@@ -22,6 +22,8 @@ jobs:
           docker build -t ${{ secrets.ECR_REPO }} .
           docker tag ${{ secrets.ECR_REPO }}:latest ${{ secrets.ECR_URI }}
           docker push ${{ secrets.ECR_URI }}
+  
+
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
