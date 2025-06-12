@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate  # 운영에서는 validate로 안전하게
+      ddl-auto: create  # 운영에서는 validate로 안전하게
 
 logging:
   level:
