@@ -14,6 +14,34 @@
           "protocol": "tcp"
         }
       ],
+      "environment": [
+        { "name": "POSTGRES_DB", "value": "monew" },
+        { "name": "POSTGRES_USER", "value": "monew_user" },
+        { "name": "POSTGRES_PASSWORD", "value": "monew1234" },
+  
+        { "name": "DB_HOST", "value": "monew-db.cri22gkiskwr.ap-northeast-2.rds.amazonaws.com" },
+        { "name": "DB_PORT", "value": "5432" },
+        { "name": "DB_NAME", "value": "monew" },
+        { "name": "DB_USERNAME", "value": "monew_user" },
+        { "name": "DB_PASSWORD", "value": "monew1234" },
+  
+        { "name": "PROJECT_NAME", "value": "monew" },
+        { "name": "PROJECT_VERSION", "value": "1.0.0" },
+        { "name": "JVM_OPTS", "value": "-Xms256m -Xmx512m" },
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "dev" },
+      
+        
+        { "name": "AWS_S3_REGION", "value": "ap-northeast-2" },
+        { "name": "AWS_S3_BUCKET", "value": "monew-bucket" },
+        { "name": "AWS_S3_PRESIGNED_URL_EXPIRATION", "value": "600" },
+      
+        { "name": "STORAGE_TYPE", "value": "s3" },
+      
+        { "name": "NAVER_API_CLIENT_ID", "value": "A6A5weJP9uDwcz08dme4" },
+        { "name": "NAVER_API_CLIENT_SECRET", "value": "PVj9Cds4a2" }
+]
+
+      
       "essential": true,
       "environment": [],
       "mountPoints": [],
