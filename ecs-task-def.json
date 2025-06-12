@@ -39,7 +39,7 @@
       
         { "name": "NAVER_API_CLIENT_ID", "value": "A6A5weJP9uDwcz08dme4" },
         { "name": "NAVER_API_CLIENT_SECRET", "value": "PVj9Cds4a2" }
-]
+      ],
 
       
       "essential": true,
