@@ -1,53 +1,90 @@
 {
-  "family": "monew-task",
-  "networkMode": "bridge",
-  "containerDefinitions": [
-    {
-      "name": "monew-app",
-      "image": "public.ecr.aws/b3n5q7g3/monew:latest",
-      "cpu": 256,
-      "memory": 512,
-      "portMappings": [
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:834701024277:task-definition/monew-task:10",
+    "containerDefinitions": [
         {
-          "containerPort": 8080,
-          "hostPort": 80,
-          "protocol": "tcp"
+            "name": "monew-app",
+            "image": "public.ecr.aws/b3n5q7g3/monew:1.6",
+            "cpu": 256,
+            "memory": 512,
+            "memoryReservation": 256,
+            "portMappings": [
+                {
+                    "name": "monew-app-80-tcp",
+                    "containerPort": 8080,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [
+                {
+                    "value": "arn:aws:s3:::monew-bucket/monew.env",
+                    "type": "s3"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/monew-task",
+                    "mode": "non-blocking",
+                    "awslogs-create-group": "true",
+                    "max-buffer-size": "25m",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
         }
-      ],
-      "environment": [
-        { "name": "POSTGRES_DB", "value": "monew" },
-        { "name": "POSTGRES_USER", "value": "monew_user" },
-        { "name": "POSTGRES_PASSWORD", "value": "monew1234" },
-  
-        { "name": "DB_HOST", "value": "monew-db.cri22gkiskwr.ap-northeast-2.rds.amazonaws.com" },
-        { "name": "DB_PORT", "value": "5432" },
-        { "name": "DB_NAME", "value": "monew" },
-        { "name": "DB_USERNAME", "value": "monew_user" },
-        { "name": "DB_PASSWORD", "value": "monew1234" },
-  
-        { "name": "PROJECT_NAME", "value": "monew" },
-        { "name": "PROJECT_VERSION", "value": "1.0.0" },
-        { "name": "JVM_OPTS", "value": "-Xms256m -Xmx512m" },
-        { "name": "SPRING_PROFILES_ACTIVE", "value": "prod" },
-      
-        
-        { "name": "AWS_S3_REGION", "value": "ap-northeast-2" },
-        { "name": "AWS_S3_BUCKET", "value": "monew-bucket" },
-        { "name": "AWS_S3_PRESIGNED_URL_EXPIRATION", "value": "600" },
-      
-        { "name": "STORAGE_TYPE", "value": "s3" },
-      
-        { "name": "NAVER_API_CLIENT_ID", "value": "A6A5weJP9uDwcz08dme4" },
-        { "name": "NAVER_API_CLIENT_SECRET", "value": "PVj9Cds4a2" }
-      ],
-
-      
-      "essential": true,
-      "mountPoints": [],
-      "volumesFrom": [],
-      "systemControls": []
-    }
-  ],
-  "volumes": [],
-  "placementConstraints": []
+    ],
+    "family": "monew-task",
+    "executionRoleArn": "arn:aws:iam::834701024277:role/ecsTaskExecutionRole",
+    "networkMode": "bridge",
+    "revision": 10,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
+        },
+        {
+            "name": "ecs.capability.env-files.s3"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2"
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2025-06-12T04:13:56.330Z",
+    "registeredBy": "arn:aws:iam::834701024277:root",
+    "enableFaultInjection": false,
+    "tags": []
 }
