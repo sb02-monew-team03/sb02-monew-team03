@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 .DS_Store
+docker-compose.yml
+./logs
+.env
 
 ### STS ###
 .apt_generated
@@ -36,3 +39,8 @@ out/
 
 ### VS Code ###
 .vscode/
+Dockerfile
+docker-compose.yml
+logs/
+monew.env
+.env
