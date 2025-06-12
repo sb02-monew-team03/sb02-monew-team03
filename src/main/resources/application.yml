@@ -22,3 +22,12 @@ task:
     scheduling:
         pool:
             size: 1
+
+management:
+    endpoint:
+        health:
+            show-details: never  # 기본은 상세 정보 숨김
+    endpoints:
+        web:
+            exposure:
+                include: health  # 최소한의 헬스체크만 허용

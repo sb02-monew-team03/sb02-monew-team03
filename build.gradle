@@ -77,6 +77,15 @@ dependencies {
 
     // 배치 사용을 위한 의존성
     implementation 'org.springframework.boot:spring-boot-starter-batch'
+
+    // Spring Boot Actuator를 위한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Micrometer 매트릭 등록기 사용을 위한 의존성
+    implementation 'io.micrometer:micrometer-core'
+
+    // Prometheus 사용을 위한 의존성
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 tasks.named('test') {
