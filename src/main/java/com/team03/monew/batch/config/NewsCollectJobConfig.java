@@ -5,6 +5,7 @@ import com.team03.monew.batch.reader.NaverNewsReader;
 import com.team03.monew.batch.reader.RssNewsReader;
 import com.team03.monew.batch.writer.NewsArticleWriter;
 import com.team03.monew.dto.newsArticle.request.NewsArticleRequestDto;
+import com.team03.monew.metrics.JobMetricListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -26,10 +27,12 @@ public class NewsCollectJobConfig {
     private final RssNewsReader rssNewsReader;
     private final NewsArticleWriter newsArticleWriter;
     private final NewsArticleProcessor newsArticleProcessor;
+    private final JobMetricListener jobMetricListener;
 
     @Bean
     public Job newsCollectJob() {
         return new JobBuilder("newsCollectJob", jobRepository)
+            .listener(jobMetricListener) // 메트릭 리스너
             .start(naverStep())
             .next(rssStep())
             .build();

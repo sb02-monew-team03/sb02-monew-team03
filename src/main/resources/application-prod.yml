@@ -30,3 +30,17 @@ aws:
     secret-key: ${AWS_S3_SECRET_KEY}
     region: ${AWS_S3_REGION}
     bucket: ${AWS_S3_BUCKET}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus, metrics
+  endpoint:
+    health:
+      show-details: never
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+

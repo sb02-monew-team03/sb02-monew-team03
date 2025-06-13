@@ -91,7 +91,6 @@ dependencies {
     // spring security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-
 }
 
 tasks.named('test') {
