@@ -5,9 +5,11 @@ import com.team03.monew.dto.user.UserLoginRequest;
 import com.team03.monew.dto.user.UserRegisterRequest;
 import com.team03.monew.dto.user.UserUpdateRequest;
 import com.team03.monew.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -60,8 +63,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody @Valid UserLoginRequest request) {
-        UserDto userDto = userService.login(request);
+    public ResponseEntity<UserDto> login(@RequestBody @Valid UserLoginRequest request, HttpServletRequest httpRequest) {
+        log.info("[컨트롤러] 로그인 API 진입 - email: {}", request.email());
+
+        UserDto userDto = userService.login(request, httpRequest);
         return ResponseEntity.ok(userDto);
     }
 
