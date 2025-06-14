@@ -24,3 +24,25 @@ jobs:
           service: your-ecs-service
           cluster: your-cluster
           wait-for-service-stability: true
+
+      # Prometheus 전용 이미지 빌드 & ECR 푸시
+      - name: Configure AWS Credentials for Prometheus
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR (Prometheus)
+        run: |
+          aws ecr get-login-password --region ap-northeast-2 | \
+          docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+
+      - name: Build Prometheus Docker Image
+        run: |
+          docker build -t prom-custom ./prometheus
+          docker tag prom-custom ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/monew-prometheus:latest
+
+      - name: Push Prometheus Image to ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/monew-prometheus:latest

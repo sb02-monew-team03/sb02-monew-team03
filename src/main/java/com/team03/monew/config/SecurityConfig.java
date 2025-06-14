@@ -6,7 +6,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,6 +35,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/index.html", "/favicon.ico", "/assets/**").permitAll()
                 .requestMatchers("/api/users/login", "/api/users").permitAll() // 로그인, 회원가입은 누구나 가능
+                .requestMatchers("/actuator/**").permitAll() // 액츄에이터 허용
                 .anyRequest().authenticated()   // 그 외는 모두 로그인 필요(인증 필요)
             )
 
