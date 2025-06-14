@@ -5,7 +5,7 @@ scrape_configs:
   - job_name: 'spring-actuator'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['43.202.37.211:8080']  # 현재 EC2 public ip로 하드 코딩
+      - targets: ['3.37.123.196:8080']  # 현재 EC2 public ip로 하드 코딩
       # - targets: ['host.docker.internal:8080'] # 로컬용
 
 
