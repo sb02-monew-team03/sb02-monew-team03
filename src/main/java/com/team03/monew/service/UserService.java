@@ -4,6 +4,7 @@ import com.team03.monew.dto.user.UserDto;
 import com.team03.monew.dto.user.UserLoginRequest;
 import com.team03.monew.dto.user.UserRegisterRequest;
 import com.team03.monew.dto.user.UserUpdateRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 public interface UserService {
@@ -16,5 +17,5 @@ public interface UserService {
 
     void deleteUserHard(UUID userId, UUID requesterId);
 
-    UserDto login(UserLoginRequest request);
+    UserDto login(UserLoginRequest request, HttpServletRequest httpRequest);
 }
