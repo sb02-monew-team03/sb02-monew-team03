@@ -12,19 +12,28 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 //import com.team03.monew.repository.ActivityRepository;
 import com.team03.monew.repository.UserRepository;
+import com.team03.monew.security.CustomUserDetails;
+import jakarta.servlet.http.HttpServletRequest;
+import java.security.Security;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-//    private final ActivityRepository activityRepository;
+    //    private final ActivityRepository activityRepository;
+    private final UserDetailsService userDetailsService;
 
     @Override
     public UserDto register(UserRegisterRequest request) {
@@ -91,18 +100,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto login(UserLoginRequest request) {
-        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> {
-            ErrorDetail detail = new ErrorDetail("EMAIL", "email", request.email());
-            return new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
-        });
+    public UserDto login(UserLoginRequest request, HttpServletRequest httpRequest) {
+        // 사용자 조회
+        CustomUserDetails userDetails = (CustomUserDetails)
+            userDetailsService.loadUserByUsername(request.email());
 
-        if (!user.getPassword().equals(request.password())) {
+        // 비밀번호 비교
+        if (!userDetails.getPassword().equals(request.password())) {
             ErrorDetail detail = new ErrorDetail("PASSWORD", "password", request.password());
             throw new CustomException(ErrorCode.UNAUTHORIZED, detail, ExceptionType.USER);
         }
 
-        return userMapper.toDto(user);
+        // 로그인한 사용자 정보를 담은 인증 객체 생성 (토큰 생성)
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        // 인증 객체를 SecurityContext에 저장 -> 세션 생성을 통해 로그인 상태 유지
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("[인증] SecurityContext 저장 완료");
+
+        // 세션을 생성해줘야 SecurityContextPersistenceFilter가 저장함
+        httpRequest.getSession(true);
+        log.info("[인증] 세션 생성 완료");
+
+        // 응답
+        return userMapper.toDto(userDetails.getUser());
     }
 
 }

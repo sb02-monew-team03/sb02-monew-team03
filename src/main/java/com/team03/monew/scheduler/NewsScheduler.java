@@ -22,7 +22,7 @@ public class NewsScheduler {
 
     private final NewsBackupService newsBackupService;
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     public void runBatchJob() throws Exception {
         JobParameters params = new JobParametersBuilder()
             .addLong("timestamp", System.currentTimeMillis()) // 중복 실행 방지용
