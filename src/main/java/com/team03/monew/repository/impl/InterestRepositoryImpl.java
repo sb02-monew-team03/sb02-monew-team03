@@ -83,7 +83,7 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
             i.getName(),
             i.getKeywords(),
             i.getSubscriberCount(),
-            login_user.getSubscriptions().contains(interest)
+            login_user.hasSubscribed(i)
         ))
         .toList();
 
