@@ -39,4 +39,6 @@ public class Subscription extends BaseTimeEntity {
         this.interest = interest;
         user.getSubscriptions().add(this); //구독 내용 추가
     }
+
+
 }
