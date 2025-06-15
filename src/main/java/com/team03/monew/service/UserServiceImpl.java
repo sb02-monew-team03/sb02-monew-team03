@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,15 +35,27 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     //    private final ActivityRepository activityRepository;
     private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDto register(UserRegisterRequest request) {
+        // 평문 비밀번호를 해시된 문자열로 변환
+        String hashedPassword = passwordEncoder.encode(request.password());
+        log.info("[회원가입] 해싱된 비밀번호: {}", hashedPassword);
+
         if (userRepository.existsByEmail(request.email())) {
             ErrorDetail detail = new ErrorDetail("Email", "email", request.email());
             throw new CustomException(ErrorCode.CONFLICT, detail, ExceptionType.USER);
         }
 
-        User user = userMapper.toUser(request);
+        // 비밀번호 해싱 처리
+        UserRegisterRequest secureRequest = new UserRegisterRequest(
+            request.email(),
+            request.nickname(),
+            hashedPassword
+        );
+
+        User user = userMapper.toUser(secureRequest);
         User saved = userRepository.save(user);
         return userMapper.toDto(saved);
     }
@@ -105,21 +118,26 @@ public class UserServiceImpl implements UserService {
         CustomUserDetails userDetails = (CustomUserDetails)
             userDetailsService.loadUserByUsername(request.email());
 
-        // 비밀번호 비교
-        if (!userDetails.getPassword().equals(request.password())) {
+        // 사용자가 입력한 비밀번호(평문)를 DB에 저장된 해시값에 내장된 salt/cost 정보를 사용해서 같은 방식으로 다시 해싱 하고,
+        // 그 결과가 DB에 저장된 해시값과 일치하는지 확인
+        if (!passwordEncoder.matches(request.password(), userDetails.getPassword())) {
             ErrorDetail detail = new ErrorDetail("PASSWORD", "password", request.password());
             throw new CustomException(ErrorCode.UNAUTHORIZED, detail, ExceptionType.USER);
         }
 
         // 로그인한 사용자 정보를 담은 인증 객체 생성 (토큰 생성)
         UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            new UsernamePasswordAuthenticationToken(userDetails, null,
+                userDetails.getAuthorities());
 
         // 인증 객체를 SecurityContext에 저장 -> 세션 생성을 통해 로그인 상태 유지
         SecurityContextHolder.getContext().setAuthentication(authentication);
         log.info("[인증] SecurityContext 저장 완료");
 
         // 세션을 생성해줘야 SecurityContextPersistenceFilter가 저장함
+        // 서버가 세션 생성 + JSESSIONID 부여
+        // JSESSIONID 가 클라이언트 브라우저에 저장됨 + 이후 모든 요청의 쿠키에 JSESSIONID 를 포함시켜 요청하게 됨.
+        // 서버는 이 JSESSIONID 를 보고 기존 세션을 꺼내게 됨.
         httpRequest.getSession(true);
         log.info("[인증] 세션 생성 완료");
 

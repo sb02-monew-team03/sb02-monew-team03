@@ -29,11 +29,13 @@ public class MoNewUserValidationFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
 
         // 1. 인증 정보 가져오기
+        // Authentication 객체 안에는 실제 인증된 사용자 정보 담겨 있음
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("[인가] 인증 정보 존재 여부: {}", authentication != null);
         log.info("[인가] 인증 여부: {}", authentication != null && authentication.isAuthenticated());
 
-        // 인증되지 않은 요청은 그대로 진행
+        // 인증되지 않은 요청은 다음 필터로 넘김
+        // 비로그인 이거나 인증되지 않은 사용자 일때
         if (authentication == null || !authentication.isAuthenticated()) {
             log.warn("[인가] 인증되지 않은 요청. 그대로 진행");
             filterChain.doFilter(request, response);
@@ -41,6 +43,7 @@ public class MoNewUserValidationFilter extends OncePerRequestFilter {
         }
 
         // 2. 사용자 ID 꺼내기
+        // Authentication 객체 안에 있는 principal를 꺼내서 CustomUserDetails 타입인지 검사
         Object principal = authentication.getPrincipal();
         if (!(principal instanceof CustomUserDetails userDetails)) {
             log.warn("[인가] 예상치 못한 Principal 타입. userDetails 아님.");
