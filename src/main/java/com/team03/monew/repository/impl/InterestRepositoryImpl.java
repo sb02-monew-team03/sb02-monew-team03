@@ -8,10 +8,13 @@ import com.team03.monew.dto.interest.CursorPageResponseInterestDto;
 import com.team03.monew.dto.interest.InterestDto;
 import com.team03.monew.entity.Interest;
 import com.team03.monew.entity.QInterest;
+import com.team03.monew.entity.Subscription;
+import com.team03.monew.entity.User;
 import com.team03.monew.exception.CustomException;
 import com.team03.monew.exception.ErrorCode;
 import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
+import com.team03.monew.repository.UserRepository;
 import com.team03.monew.repository.custom.InterestRepositoryCustom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Repository;
 public class InterestRepositoryImpl implements InterestRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
+  private final UserRepository userRepository;
 
   @Override
   public CursorPageResponseInterestDto searchInterests(UUID userId, String keyword, String orderBy, String direction,
@@ -65,6 +69,13 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
         .fetch();
 
     // 결과 변환
+    User login_user = userRepository.findById(userId).orElseThrow(
+        () -> new CustomException(
+        ErrorCode.RESOURCE_NOT_FOUND,
+        new ErrorDetail("User", "userId", "user"),
+        ExceptionType.INTEREST
+    ));
+
     List<InterestDto> content = results.stream()
         .limit(limit)
         .map(i -> new InterestDto(
@@ -72,7 +83,7 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
             i.getName(),
             i.getKeywords(),
             i.getSubscriberCount(),
-            i.getSubscriberCount()>0 // 구독 여부 판단 로직 없음
+            login_user.hasSubscribed(i)
         ))
         .toList();
 

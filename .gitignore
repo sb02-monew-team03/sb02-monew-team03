@@ -39,7 +39,6 @@ out/
 
 ### VS Code ###
 .vscode/
-Dockerfile
 docker-compose.yml
 logs/
 monew.env
