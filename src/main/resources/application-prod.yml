@@ -8,6 +8,11 @@ spring:
     hibernate:
       ddl-auto: create  # 운영에서는 validate로 안전하게
 
+  data:
+    mongodb:
+        uri: mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@cluster0.zclecbn.mongodb.net/monew-prod?retryWrites=true&w=majority
+        uuid-representation: standard
+
 logging:
   level:
     root: WARN
@@ -17,7 +22,7 @@ logging:
     org.hibernate.type: OFF
 
 custom:
-  activity-service-strategy: lazy  # 기본 전략
+  activity-service-strategy: mongo  # 기본 전략
 
 naver:
   api:
@@ -43,4 +48,3 @@ management:
     metrics:
       export:
         enabled: true
-

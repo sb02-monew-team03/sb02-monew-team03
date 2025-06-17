@@ -68,4 +68,11 @@ public class User extends BaseTimeEntity {
     public void markAsDeleted() {
         this.deleted = true;
     }
+
+    public boolean hasSubscribed(Interest interest) {
+        return this.subscriptions.stream()
+            .anyMatch(subscription ->
+                subscription.getInterest().equals(interest)
+            );
+    }
 }

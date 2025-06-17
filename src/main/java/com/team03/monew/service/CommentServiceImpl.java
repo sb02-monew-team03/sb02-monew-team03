@@ -4,7 +4,9 @@ import com.team03.monew.dto.comment.mapper.CommentLikesMapper;
 import com.team03.monew.dto.comment.mapper.CommentMapper;
 import com.team03.monew.dto.comment.request.CommentRegisterRequest;
 import com.team03.monew.dto.comment.request.CommentUpdateRequest;
+import com.team03.monew.dto.comment.response.CommentActivityDto;
 import com.team03.monew.dto.comment.response.CommentDto;
+import com.team03.monew.dto.comment.response.CommentLikeActivityDto;
 import com.team03.monew.dto.comment.response.CommentLikeDto;
 import com.team03.monew.dto.comment.response.CursorPageResponseCommentDto;
 import com.team03.monew.entity.Comment;
@@ -17,6 +19,7 @@ import com.team03.monew.exception.ErrorDetail;
 import com.team03.monew.exception.ExceptionType;
 import com.team03.monew.repository.CommentLikeRepository;
 import com.team03.monew.repository.CommentRepository;
+import com.team03.monew.service.activity.ActivityDocumentUpdater;
 import com.team03.monew.util.OrderBy;
 import com.team03.monew.util.SortDirection;
 import com.team03.monew.util.EntityFinder;
@@ -36,6 +39,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final EntityFinder entityFinder;
+    private final ActivityDocumentUpdater activityDocumentUpdater;
 
     @Transactional(readOnly = true)
     public CursorPageResponseCommentDto<CommentDto> commentCursorPage(
@@ -83,8 +87,19 @@ public class CommentServiceImpl implements CommentService {
         User user = entityFinder.getUserOrThrow(request.userId());
         NewsArticle article = entityFinder.getNewsArticleOrThrow(request.articleId());
 
+        // 댓글 생성 및 저장
         Comment comment = CommentMapper.toComment(request.content(), article, user);
-        return CommentMapper.toCommentDto(commentRepository.save(comment));
+        Comment savedComment = commentRepository.save(comment);
+
+        // DTO 변환
+        CommentDto commentDto = CommentMapper.toCommentDto(savedComment);
+
+        // Mongo 활동 내역 동기화 (최근 댓글 추가)
+        CommentActivityDto commentActivityDto = CommentActivityDto.from(savedComment);
+        activityDocumentUpdater.addRecentComment(user.getId(), commentActivityDto);
+
+        // 5. 응답 반환
+        return commentDto;
     }
 
     @Override
@@ -117,6 +132,10 @@ public class CommentServiceImpl implements CommentService {
 
         CommentLike saved = commentLikeRepository.save(commentLike);
         log.info("[CommentLike] 저장 완료 - commentLikeId: {}, userId: {}, commentId: {}", saved.getId(), userId, commentId);
+
+        // Mongo 활동 내역 동기화
+        CommentLikeActivityDto activityDto = CommentLikeActivityDto.from(saved);
+        activityDocumentUpdater.addRecentCommentLike(user.getId(), activityDto);
 
         return CommentLikesMapper.toCommentLikeDto(saved);
     }

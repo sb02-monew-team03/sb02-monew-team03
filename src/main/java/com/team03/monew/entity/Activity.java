@@ -1,39 +1,39 @@
 package com.team03.monew.entity;
 
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
+import com.team03.monew.dto.comment.response.CommentActivityDto;
+import com.team03.monew.dto.comment.response.CommentLikeActivityDto;
+import com.team03.monew.dto.newsArticle.response.ArticleViewDto;
+import com.team03.monew.dto.subscription.SubscriptionDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-// @Entity -> 추후 MongoDB사용시 주석 해제 예정 (PostgreSQL에서는 테이블 생성안함)
-// @Table(name = "activities")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Document(collection = "activities")
 public class Activity {
 
     @Id
     private UUID userId;
 
-    @ElementCollection
-    private List<Long> recentCommentIds = new ArrayList<>();
+    private String email;
+    private String nickname;
+    private LocalDateTime createdAt;
 
-    @ElementCollection
-    private List<Long> recentLikedCommentIds = new ArrayList<>();
+    private List<SubscriptionDto> subscriptions;
+    private List<CommentActivityDto> comments;
+    private List<CommentLikeActivityDto> commentLikes;
+    private List<ArticleViewDto> articleViews;
 
-    @ElementCollection
-    private List<Long> recentViewedNewsIds = new ArrayList<>();
-
-    @ElementCollection
-    private List<Long> subscribedInterestIds = new ArrayList<>();
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId // user 필드에서 참조하는 User의 ID를 이 엔티티의 PK로 사용
-    private User user;
-
-    // getter/setter
 }

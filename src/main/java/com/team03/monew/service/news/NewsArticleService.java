@@ -21,6 +21,7 @@ import com.team03.monew.repository.InterestRepository;
 import com.team03.monew.repository.NewsArticleRepository;
 import com.team03.monew.repository.UserRepository;
 import com.team03.monew.service.InterestService;
+import com.team03.monew.service.activity.ActivityDocumentUpdater;
 import com.team03.monew.util.RSSUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -61,6 +62,7 @@ public class NewsArticleService {
     private final UserRepository userRepository;
     private final RSSUtils rssUtils;
     private final InterestService interestService;
+    private final ActivityDocumentUpdater activityDocumentUpdater;
 
     @Value("${aws.s3.bucket}")
     private String bucket;
@@ -95,6 +97,10 @@ public class NewsArticleService {
         // 조회 기록 저장 및 viewCount 증가
         ArticleView view = articleViewRepository.save(new ArticleView(article, user));
         article.increaseViewCount();
+
+        // Mongo 활동 내역 동기화
+        ArticleViewDto viewDto = ArticleViewMapper.toDto(view);
+        activityDocumentUpdater.addRecentArticleView(user.getId(), viewDto);
 
         return ArticleViewMapper.toDto(view);
     }

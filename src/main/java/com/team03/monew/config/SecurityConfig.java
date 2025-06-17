@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -18,12 +20,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity  //Spring Security를 활성화하겠다는 의미
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
+    // Spring Security 에서 보안 설정 정의
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -48,9 +51,10 @@ public class SecurityConfig {
                 .requireExplicitSave(false)
             )
 
-
             // 커스텀 필터 등록
-            .addFilterAfter(new MoNewUserValidationFilter(), UsernamePasswordAuthenticationFilter.class);
+            // UsernamePasswordAuthenticationFilter 다음에 MoNewUserValidationFilter를 실행하도록 설정
+            .addFilterAfter(new MoNewUserValidationFilter(),
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -58,14 +62,15 @@ public class SecurityConfig {
     // 수동 인증 시 사용할 AuthenticationManager Bean 등록
     // formLogin()을 사용하지 않기 때문에 -> 인증 직접 처리 위해 Bean 등록
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+        throws Exception {
         return config.getAuthenticationManager();
     }
 
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); //
+        config.setAllowCredentials(true); // 쿠키 포함 요청 허용
         config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
@@ -74,5 +79,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
