@@ -104,4 +104,20 @@ public class ActivityDocumentUpdater {
                 return activityRepository.save(newActivity);
             });
     }
+
+    public void update(UUID userId) {
+        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> {
+            ErrorDetail detail = new ErrorDetail("UUID", "userId", userId.toString());
+            throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, detail, ExceptionType.USER);
+        });
+
+        Activity activity = activityRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND,
+                new ErrorDetail("UUID", "activity.userId", userId.toString()),
+                ExceptionType.USER));
+
+        activity.setNickname(user.getNickname());
+
+        activityRepository.save(activity);
+    }
 }
