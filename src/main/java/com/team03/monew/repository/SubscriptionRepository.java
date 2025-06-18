@@ -29,4 +29,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     List<User> findAllByInterest(@Param("interest") Interest interest);
 
     List<Subscription> findByUserOrderByCreatedAtDesc(User user);
+
+    void deleteByInterest(Interest interest);
 }

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,12 +41,12 @@ public class InterestController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Void> updateInterestKeywords(
+  public ResponseEntity<InterestDto> updateInterestKeywords(
       @PathVariable(name = "id") UUID id,
       @RequestBody @Valid InterestUpdateRequest request
   ) {
-    interestService.updateKeywords(id, request.keywords());
-    return ResponseEntity.noContent().build();
+    InterestDto result = interestService.updateKeywords(id, request.keywords());
+    return ResponseEntity.ok(result);
   }
 
   @GetMapping
@@ -84,11 +85,15 @@ public class InterestController {
   }
 
   @DeleteMapping("/{interestId}")
-  public ResponseEntity<Void> deleteInterest(
+  public ResponseEntity<String> deleteInterest(
           @PathVariable(name = "interestId") UUID interestId
   ) {
-    interestService.delete(interestId);
-    return ResponseEntity.noContent().build();
+    boolean deleted =  interestService.delete(interestId);
+    if (deleted) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).body("삭제 성공");
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("관심사 정보 없음");
+    }
   }
 
 }
