@@ -13,6 +13,7 @@ import com.team03.monew.exception.ExceptionType;
 //import com.team03.monew.repository.ActivityRepository;
 import com.team03.monew.repository.UserRepository;
 import com.team03.monew.security.CustomUserDetails;
+import com.team03.monew.service.activity.ActivityDocumentUpdater;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Security;
 import java.util.UUID;
@@ -33,9 +34,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    //    private final ActivityRepository activityRepository;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final ActivityDocumentUpdater activityDocumentUpdater;
 
     @Override
     public UserDto register(UserRegisterRequest request) {
@@ -74,6 +75,8 @@ public class UserServiceImpl implements UserService {
         }
 
         user.updateNickname(request.nickname());
+
+        activityDocumentUpdater.update(user.getId());
         return userMapper.toDto(user);
     }
 
