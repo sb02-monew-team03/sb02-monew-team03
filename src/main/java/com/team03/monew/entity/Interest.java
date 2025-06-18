@@ -1,10 +1,12 @@
 package com.team03.monew.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,4 +41,6 @@ public class Interest extends BaseTimeEntity {
   @Builder.Default
   private int subscriberCount = 0;
 
+  @OneToMany(mappedBy = "interest", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Subscription> subscriptions = new ArrayList<>();
 }
