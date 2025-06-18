@@ -120,4 +120,32 @@ public class ActivityDocumentUpdater {
 
         activityRepository.save(activity);
     }
+
+    public void updateSubscription(UUID userId, SubscriptionDto updatedDto) {
+        Activity activity = getOrCreateActivity(userId);
+
+        List<SubscriptionDto> subscriptions = activity.getSubscriptions();
+
+        // 동일한 interestId를 가진 기존 항목을 찾아서 교체
+        for (int i = 0; i < subscriptions.size(); i++) {
+            if (subscriptions.get(i).interestId().equals(updatedDto.interestId())) {
+                subscriptions.set(i, updatedDto);
+                activityRepository.save(activity);
+                return;
+            }
+        }
+
+        // 기존에 없으면 추가 (안전장치)
+        subscriptions.add(updatedDto);
+        activityRepository.save(activity);
+    }
+
+    public void removeSubscription(UUID userId, UUID interestId) {
+        Activity activity = getOrCreateActivity(userId);
+
+        List<SubscriptionDto> subscriptions = activity.getSubscriptions();
+        subscriptions.removeIf(s -> s.interestId().equals(interestId));
+
+        activityRepository.save(activity);
+    }
 }
