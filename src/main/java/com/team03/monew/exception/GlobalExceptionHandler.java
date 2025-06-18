@@ -1,5 +1,7 @@
 package com.team03.monew.exception;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 import java.time.ZonedDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +36,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    public ResponseEntity<ErrorResponse> handleException(Exception e) throws Exception {
         log.error(" 처리되지 않은 서버 예외 발생", e);
+
+        // actuator 요청은 커스텀 예외로 처리하지 않고 스프링에 맡기기
+        if (path.startsWith("/actuator")) {
+            throw e;
+        }
 
         ErrorResponse errorResponse = new ErrorResponse(
                 ZonedDateTime.now().toString(),
