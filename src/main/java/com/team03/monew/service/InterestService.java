@@ -75,11 +75,16 @@ public class InterestService {
 
         interest.getKeywords().clear();
         interest.getKeywords().addAll(newKeywords);
+        Interest updated = interestRepository.save(interest); // 변경 감지 + save
 
-        // 변경 감지로 자동 저장 (save 호출 안 해도 됨)
-        Interest interest1 =  interestRepository.save(interest);
+        // 활동 내역 도큐먼트 동기화
+        List<Subscription> subscriptions = subscriptionRepository.findSubscriptionsByInterest(interest);
+        for (Subscription subscription : subscriptions) {
+            SubscriptionDto updatedDto = SubsciptionMapper.from(subscription);
+            activityDocumentUpdater.updateSubscription(subscription.getUser().getId(), updatedDto);
+        }
 
-        return InterestMapper.toDto(interest1);// 선택적
+        return InterestMapper.toDto(updated);
     }
 
     public Optional<CursorPageResponseInterestDto> searchInterests(
@@ -138,6 +143,8 @@ public class InterestService {
             .ifPresent(subscription -> {
                 decreaseSubscriberCount(interest);
                 subscriptionRepository.delete(subscription);
+
+                activityDocumentUpdater.removeSubscription(userId, interestId);
             });
     }
 
@@ -147,8 +154,14 @@ public class InterestService {
                 "interest", "interesdId", "interest"
             ), ExceptionType.INTEREST));
 
+        List<Subscription> subscriptions = subscriptionRepository.findSubscriptionsByInterest(interest);
+        for (Subscription subscription : subscriptions) {
+            activityDocumentUpdater.removeSubscription(subscription.getUser().getId(), interest.getId());
+        }
+
         interestRepository.delete(interest);
         return true;
+
     }
 
     public Map<Interest, List<String>> getInterestKeywordMap() {

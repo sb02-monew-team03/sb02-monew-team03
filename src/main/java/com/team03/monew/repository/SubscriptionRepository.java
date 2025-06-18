@@ -31,4 +31,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     List<Subscription> findByUserOrderByCreatedAtDesc(User user);
 
     void deleteByInterest(Interest interest);
+
+    List<Subscription> findSubscriptionsByInterest(Interest interest);
 }
