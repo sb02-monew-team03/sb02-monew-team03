@@ -67,7 +67,7 @@ public class InterestService {
     }
 
     @Transactional
-    public void updateKeywords(UUID interestId, List<String> newKeywords) {
+    public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
         Interest interest = interestRepository.findById(interestId)
             .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, new ErrorDetail(
                 "interest", "interesdId", "interest"
@@ -77,7 +77,9 @@ public class InterestService {
         interest.getKeywords().addAll(newKeywords);
 
         // 변경 감지로 자동 저장 (save 호출 안 해도 됨)
-        interestRepository.save(interest); // 선택적
+        Interest interest1 =  interestRepository.save(interest);
+
+        return InterestMapper.toDto(interest1);// 선택적
     }
 
     public Optional<CursorPageResponseInterestDto> searchInterests(
@@ -139,12 +141,14 @@ public class InterestService {
             });
     }
 
-    public void delete(UUID interestId) {
+    public boolean delete(UUID interestId) {
         Interest interest = interestRepository.findById(interestId)
             .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, new ErrorDetail(
                 "interest", "interesdId", "interest"
             ), ExceptionType.INTEREST));
+
         interestRepository.delete(interest);
+        return true;
     }
 
     public Map<Interest, List<String>> getInterestKeywordMap() {
